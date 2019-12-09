@@ -123,3 +123,36 @@ app.get('/inout', (req, res) =>{
 app.get('/admin', (req, res) =>{
     res.render('admin');
 });
+
+app.get('/signup', (req, res) =>{
+    res.render('signup');
+});
+app.post('/signup', (req, res)=>{
+    let id = req.body.id;
+    let name = req.body.name;
+    let password = req.body.pass;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+    let tel1 = req.body.tel1;
+    let tel2 = req.body.tel2;
+    let tel3 = req.body.tel3;
+    let addr1 = req.body.addr1;
+    let addr2 = req.body.addr2;
+    let addr3 = req.body.addr3;
+
+    let values = [id, password, "P", name, emailid, emaildomain, tel1, tel2, tel3, addr1, addr2, addr3];
+    let user_insert = `
+    insert into user (id, password, grade, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address)
+    values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    pool.getConnection((err, connection) => {
+        console.log(err);
+        connection.query(user_insert, values, (err, result)=>{
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error!!!')
+            }        
+            res.redirect('/');
+        });
+    });
+});
