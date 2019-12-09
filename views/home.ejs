@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        <%= titlestr %>
+    </title>
+</head>
+
+<body>
+    <div>
+        <h3>ejs test index!!!!!</h3>
+    </div>
+    <ul>
+        <%_ contents.forEach(function(content){ _%>
+        <li><%= content%></li>
+        <%_ }); _%>
+    </ul>
+</body>
+
+</html>
