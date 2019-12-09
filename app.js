@@ -65,6 +65,18 @@ app.get('/board', (req, res) =>{
     res.render('board')
 });
 
+app.get('/calendar', (req, res) =>{
+    res.render('calendar')
+});
+
+app.get('/inout', (req, res) =>{
+    res.render('inout')
+});
+
+app.get('/admin', (req, res) =>{
+    res.render('admin')
+});
+
 app.listen(8888, () => {
 	console.log('8888 port opened!!!');
 });
