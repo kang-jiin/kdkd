@@ -14,14 +14,14 @@
 							<div class="header">
 								<div class="logo text-center"><img src="/img/logo-dark.png" alt="Klorofil Logo"></div>
 							</div>
-							<form class="form-auth-small" action="index.php">
+							<form method="POST" class="form-auth-small" action="/login">
 								<div class="form-group">
-									<label for="signin-email" class="control-label sr-only">Email</label>
-									<input type="text" class="form-control" id="signin-email" value="" placeholder="ID">
+									<label for="signin-email" class="control-label sr-only">ID</label>
+									<input type="text" class="form-control" id="usr" value="" placeholder="ID" name="username">
 								</div>
 								<div class="form-group">
 									<label for="signin-password" class="control-label sr-only">Password</label>
-									<input type="password" class="form-control" id="signin-password" value="" placeholder="Password">
+									<input type="password" class="form-control" id="pwd" value="" placeholder="Password" name="password">
 								</div>
 								<button type="submit" class="btn btn-primary btn-lg btn-block">로그인</button>
 								<div class="bottom">

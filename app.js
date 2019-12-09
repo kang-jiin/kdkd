@@ -5,6 +5,7 @@ const multer = require('multer')
 const session = require('express-session');
 
 const app = express();
+const http = require('http').Server(app);
 //var upload = multer({ dest: 'uploads/' });
 
 app.locals.pretty = true;
@@ -26,61 +27,99 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 
 //-----------DB------------------
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
     host: '183.101.196.138',
     user: 'kdkd',
     password: 'kdkd',
-    database: 'kdkd'
+    database: 'kdkd',
+    port: 3306,
+    connectionLimit: 20,
+    waitForConnection: false
 });
-
-connection.connect((err) => {
-    if (err) {
-        console.log(err);
-        throw err;
-    }
-    console.log('connerct success : ' + connection.threadId);
-});
+http.listen(8888, () => {
+    console.log('8888 port opened!!!');
+})
 //-----------DB------------------
 
-// 추후 수정
-// 로그인 되어있으면 -> home
-// 로그인 안돼있으면 -> login
 app.get('/', (req, res) => {
-    res.render('home');
+    const sess = req.session;
+    if(sess.userid) {
+        res.render('home');
+    }
+    else {
+        res.render('login');
+    }
 });
 
 app.get('/login', (req, res) =>{
-    res.render('login')
+    const sess = req.session;
+    res.render('login', { pass: true });
+});
+
+app.post('/login', (req, res) => {
+    const sess = req.session;
+    let values = [req.body.username, req.body.password];
+    let login_query = `
+    select *
+    from user
+    where id=? and password=?;
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(login_query, values, (err, results) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            if (results.length == 1) {
+                sess.userid = results[0].id;
+                sess.name = results[0].name;
+                sess.grade = results[0].grade;
+                req.session.save(() => {
+                    connection.release();
+                    console.log(results[0].id);
+                    console.log(results[0].name);
+                    res.redirect('/');
+                });
+            } else {
+                connection.release();
+                res.render('login', { pass: false });
+            }
+        })
+    });
 });
 
 app.get('/mypage', (req, res) =>{
-    res.render('mypage')
+    res.render('mypage');
+});
+
+app.get('/logout', (req, res) =>{
+    const sess = req.session;
+    sess.destroy();
+    res.redirect('/login');
 });
 
 app.get('/home', (req, res) =>{
-    res.render('home')
+    res.render('home');
 });
 
 app.get('/notice', (req, res) =>{
-    res.render('notice')
+    res.render('notice');
 });
 
 app.get('/board', (req, res) =>{
-    res.render('board')
+    res.render('board');
 });
 
 app.get('/calendar', (req, res) =>{
-    res.render('calendar')
+    res.render('calendar');
 });
 
 app.get('/inout', (req, res) =>{
-    res.render('inout')
+    res.render('inout');
 });
 
 app.get('/admin', (req, res) =>{
-    res.render('admin')
-});
-
-app.listen(8888, () => {
-	console.log('8888 port opened!!!');
+    res.render('admin');
 });
