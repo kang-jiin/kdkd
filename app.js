@@ -43,10 +43,8 @@ connection.connect((err) => {
 //-----------DB------------------
 
 app.get('/', (req, res) => {
-	let title = 'ejs dynamic title!!!';
-	let img = 'sj.png';
-	let arr = ['javascript', 'web', 'nodejs'];
-	res.render('home', {titlestr: title, imgstr: img, contents: arr});
+	
+	res.render('home');
 });
 
 app.listen(8888, () => {
