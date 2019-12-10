@@ -124,6 +124,10 @@ app.get('/admin', (req, res) =>{
     res.render('admin/admin');
 });
 
+app.get('/admin/student_add', (req, res) =>{
+    res.render('admin/student_add');
+});
+
 app.get('/signup', (req, res) =>{
     res.render('user/signup');
 });
