@@ -176,3 +176,7 @@ app.post('/signup', (req, res)=>{
         });
     });
 });
+
+app.get('/pw', (req, res) =>{
+    res.render('pw');
+});
