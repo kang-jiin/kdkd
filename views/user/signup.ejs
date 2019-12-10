@@ -37,6 +37,7 @@
 <div class="container" align="center" style="margin-top: 70px; margin-bottom: 50px;">
     <div class="col-lg-6  border border-dark rounded" align="center" style="padding: 40px;">
         <h2>회원가입</h2>
+        <p><%=msg%></p>
         <form id="signupform" method="post" action="/signup">
             <div class="form-group" align="left">
                 <label for="name">이름</label>
@@ -109,8 +110,10 @@
                         <option value="달님반">달님반</option>
                         <option value="꽃님반">꽃님반</option>
                     </select>
+                </div>
+                <div>
                     <label for="cln">학생이름</label>
-                    <input type="text" class="form-control" id="cln2" name="cln2"" placeholder="" size="25">
+                    <input type="text" class="form-control" id="cln2" name="cln2" placeholder="" size="25">
                 </div>
             </div>
             <div class="form-group" align="center">

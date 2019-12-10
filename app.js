@@ -8,6 +8,8 @@ const app = express();
 const http = require('http').Server(app);
 //var upload = multer({ dest: 'uploads/' });
 
+var sign_up_err=0;
+
 app.locals.pretty = true;
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.static('public'));
@@ -175,7 +177,12 @@ app.get('/signup', (req, res) =>{
             
             for(var i =0; i<results.length; i++)
                 ids.push(results[i].id);
-            res.render('user/signup', {ids :ids});    
+            if(sign_up_err==1)
+                msg="정보가 없습니다";
+            else
+                msg="정확하게 입력해주세요";
+            sign_up_err = 0;
+            res.render('user/signup', {ids : ids, msg:msg});    
         });    
     });
 });
@@ -223,6 +230,9 @@ app.post('/signup', (req, res)=>{
                     connection.query(relation_insert, kim, (err, result)=>{
                         res.redirect('/login');
                     });
+                }else{
+                    sign_up_err=1;
+                    res.redirect('/signup');
                 }    
             });        
         });
