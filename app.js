@@ -178,5 +178,38 @@ app.post('/signup', (req, res)=>{
 });
 
 app.get('/pw', (req, res) =>{
-    res.render('user/pw');
+    res.render('user/pw', {msg: "정확하게 입력하세요"});
+});
+app.post('/pw', (req, res) =>{
+    const sess = req.session;
+
+    let name = req.body.name;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+
+    let values = [name, emailid, emaildomain];
+    let find_idpw_query = `
+    select *
+    from user
+    where name=? and emailid=? and emaildomain=?;
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(find_idpw_query, values, (err, results) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            if (results.length == 1) {
+                sess.userid = results[0].id;
+                sess.name = results[0].name;
+                sess.grade = results[0].grade;
+                req.session.save(() => {
+                    res.redirect('/mypage');
+                });
+            } else {
+                res.render('user/pw', { msg: "등록된 계정이 없습니다." });
+            }
+        });
+    });
 });
