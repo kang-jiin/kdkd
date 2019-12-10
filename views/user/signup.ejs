@@ -1,11 +1,43 @@
 <html>
 <head>
     <%- include('../includes/head.ejs') %>
+    <script>
+     var idcheck = false;
+        window.onload = function(){
+            document.getElementById('id').onkeyup = function(){
+                var ids = new Array();
+                <% ids.forEach((id)=>{ -%>
+                ids.push("<%= id%>");
+                <% })-%>
+                var length = <%= ids.length%>;
+                var text = document.getElementById('id').value;
+                var tl = text.length;
+                var s = document.getElementById('idmsg');
+                s.setAttribute('color', 'red');
+                var msg;
+                if(tl < 4 || tl > 20){
+                    idcheck = false;
+                    msg = '**4~20자의 아이디를 사용하십시오**';    
+                }
+                else{
+                    msg = '**사용 가능한 아이디입니다.**';
+                    idcheck = true;
+                    for(var i=0; i < length; i++)
+                        if(ids[i] == text){
+                            idcheck = false;
+                            msg = '**이미 사용중인 아이디입니다**'; break;
+                        }
+                }
+                document.getElementById('idmsg').innerHTML = msg;
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container" align="center" style="margin-top: 70px; margin-bottom: 50px;">
     <div class="col-lg-6  border border-dark rounded" align="center" style="padding: 40px;">
         <h2>회원가입</h2>
+        <p><%=msg%></p>
         <form id="signupform" method="post" action="/signup">
             <div class="form-group" align="left">
                 <label for="name">이름</label>
@@ -15,6 +47,8 @@
             <div class="form-group" align="left">
                 <label for="">아이디</label>
                 <input type="text" class="form-control" id="id" name="id" onkeyup="javascript:idcheck();" placeholder="">
+                <span id="idmsg" class="msg"></span>
+
                 <div id="resultview"></div>
             </div>
             <div class="form-group" align="left">
@@ -76,8 +110,10 @@
                         <option value="달님반">달님반</option>
                         <option value="꽃님반">꽃님반</option>
                     </select>
+                </div>
+                <div>
                     <label for="cln">학생이름</label>
-                    <input type="text" class="form-control" id="cln2" name="cln2"" placeholder="" size="25">
+                    <input type="text" class="form-control" id="cln2" name="cln2" placeholder="" size="25">
                 </div>
             </div>
             <div class="form-group" align="center">
