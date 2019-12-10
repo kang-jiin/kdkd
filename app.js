@@ -121,7 +121,39 @@ app.get('/inout', (req, res) =>{
 });
 
 app.get('/admin', (req, res) =>{
-    res.render('admin/admin');
+    let class_values = ["햇님반", "별님반", "달님반", "꽃님반"];
+    let select_student = `
+    select * from student 
+    where class = ?`
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_student, class_values[0], (err, result1)=>{
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.query(select_student, class_values[1], (err, result2)=>{
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.query(select_student, class_values[2], (err, result3)=>{
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    connection.query(select_student, class_values[3], (err, result4)=>{
+                        if (err) {
+                            console.log(err);
+                            res.status(500).send('Internal Server Error!!!')
+                        }
+                        res.render('admin/admin', {student1: result1, student2: result2, student3: result3, student4: result4});
+                    });
+                });
+            });
+        });
+    });
+    
 });
 
 app.get('/admin/student_add', (req, res) =>{
