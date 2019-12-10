@@ -47,13 +47,13 @@ app.get('/', (req, res) => {
         res.render('home');
     }
     else {
-        res.render('login');
+        res.render('user/login');
     }
 });
 
 app.get('/login', (req, res) =>{
     const sess = req.session;
-    res.render('login', { pass: true });
+    res.render('user/login', { pass: true });
 });
 
 app.post('/login', (req, res) => {
@@ -84,14 +84,14 @@ app.post('/login', (req, res) => {
                 });
             } else {
                 connection.release();
-                res.render('login', { pass: false });
+                res.render('user/login', { pass: false });
             }
         })
     });
 });
 
 app.get('/mypage', (req, res) =>{
-    res.render('mypage');
+    res.render('user/mypage');
 });
 
 app.get('/logout', (req, res) =>{
@@ -105,27 +105,27 @@ app.get('/home', (req, res) =>{
 });
 
 app.get('/notice', (req, res) =>{
-    res.render('notice');
+    res.render('notice/notice');
 });
 
 app.get('/board', (req, res) =>{
-    res.render('board');
+    res.render('board/board');
 });
 
 app.get('/calendar', (req, res) =>{
-    res.render('calendar');
+    res.render('calendar/calendar');
 });
 
 app.get('/inout', (req, res) =>{
-    res.render('inout');
+    res.render('inout/inout');
 });
 
 app.get('/admin', (req, res) =>{
-    res.render('admin');
+    res.render('admin/admin');
 });
 
 app.get('/signup', (req, res) =>{
-    res.render('signup');
+    res.render('user/signup');
 });
 app.post('/signup', (req, res)=>{
     let id = req.body.id;
@@ -178,5 +178,5 @@ app.post('/signup', (req, res)=>{
 });
 
 app.get('/pw', (req, res) =>{
-    res.render('pw');
+    res.render('user/pw');
 });
