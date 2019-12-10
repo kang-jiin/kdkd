@@ -175,7 +175,6 @@ app.get('/signup', (req, res) =>{
             
             for(var i =0; i<results.length; i++)
                 ids.push(results[i].id);
-            console.log(ids);
             res.render('user/signup', {ids :ids});    
         });    
     });
