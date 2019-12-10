@@ -3,10 +3,10 @@
     <%- include('./includes/head.ejs') %>
 </head>
 </body>
-<div class="container " align="center" style="margin-top: 70px; margin-bottom: 50px;">
+<div class="container" align="center" style="margin-top: 70px; margin-bottom: 50px;">
     <div class="col-lg-6  border border-dark rounded" align="center" style="padding: 40px;">
         <h2>회원가입</h2>
-        <form id="signupform" method="post" action="/signup" class="form-inline">
+        <form id="signupform" method="post" action="/signup">
             <div class="form-group" align="left">
                 <label for="name">이름</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="">
@@ -29,9 +29,9 @@
             <div class="alert alert-danger" id="alert-danger">비밀번호가 일치하지 않습니다.</div>
             <div class="form-group" align="left">
                 <label for="email">이메일</label><br>
-                <div id="email" class="custom-control-inline ">
-                    <input type="text" class="col-md-4" id="emailid" name="emailid" placeholder="" size="25"> @
-                    <select class="col-md-4 " id="emaildomain" name="emaildomain">
+                <div id="email" class="custom-control-inline">
+                    <input type="text" class="form-control" id="emailid" name="emailid" placeholder="" size="25"> @
+                    <select class="form-control" id="emaildomain" name="emaildomain">
                         <option value="naver.com">naver.com</option>
                         <option value="google.com">google.com</option>
                         <option value="daum.net">daum.net</option>
@@ -40,9 +40,9 @@
                     </select>
                 </div>
             </div>
-            <div align="left">
+            <div class="form-group" align="left">
                 <label for="tel">전화번호</label>
-                <div id="tel" class="custom-control-inline" class="form-group">
+                <div id="tel" class="custom-control-inline">
                     <select class="form-control" id="tel1" name="tel1">
                         <option value="010">010</option>
                         <option value="02">02</option>
@@ -51,8 +51,8 @@
                         <option value="041">041</option>
                         <option value="051">051</option>
                         <option value="061">061</option>
-                    </select> -
-                    <input type="text" class="form-control" id="tel2" name="tel2" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' maxlength=4> -
+                    </select> _
+                    <input type="text" class="form-control" id="tel2" name="tel2" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' maxlength=4> _
                     <input type="text" class="form-control" id="tel3" name="tel3" onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' maxlength=4>
                 </div>
             </div>
@@ -67,11 +67,23 @@
             <div class="form-group">
                 <input class="form-control" placeholder="상세주소" name="addr3" id="addr3" type="text" />
             </div>
-    
+            <div align="left" class="form-group custom-control-inline">
+                <label for="cln">학생반</label>
+                <div id="cln" class="custom-control-inline">
+                    <select class="form-control" id="cln1" name="cln1">
+                        <option value="햇님반">햇님반</option>
+                        <option value="별님반">별님반</option>
+                        <option value="달님반">달님반</option>
+                        <option value="꽃님반">꽃님반</option>
+                    </select>
+                    <label for="cln">학생이름</label>
+                    <input type="text" class="form-control" id="cln2" name="cln2"" placeholder="" size="25">
+                </div>
+            </div>
             <div class="form-group" align="center">
                 <button type="submit" class="btn btn-primary" id="registerBtn">회원가입</button>
                 <button type="reset" class="btn btn-warning">초기화</button>
-            </div>
+            </div>   
         </form>
     </div>
 </div>

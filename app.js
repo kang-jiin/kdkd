@@ -139,20 +139,40 @@ app.post('/signup', (req, res)=>{
     let addr1 = req.body.addr1;
     let addr2 = req.body.addr2;
     let addr3 = req.body.addr3;
+    let cln1 = req.body.cln1;
+    let cln2 = req.body.cln2;
 
     let values = [id, password, "P", name, emailid, emaildomain, tel1, tel2, tel3, addr1, addr2, addr3];
+    let values_relation = [cln1, cln2];
     let user_insert = `
     insert into user (id, password, grade, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address)
     values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
+    let select_student = `
+    select * from student 
+    where class = ? and
+    name = ?`
+    let relation_insert = `
+    insert into relation (student_id, parents_id)
+    values(?, ?)`;
     pool.getConnection((err, connection) => {
-        console.log(err);
         connection.query(user_insert, values, (err, result)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send('Internal Server Error!!!')
-            }        
-            res.redirect('/');
+            }
+            connection.query(select_student, values_relation, (err, result)=>{
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                if(result.length > 0){
+                    let kim = [result[0].id, id];
+                    connection.query(relation_insert, kim, (err, result)=>{
+                        res.redirect('/login');
+                    });
+                }    
+            });        
         });
     });
 });
