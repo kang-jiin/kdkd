@@ -13,32 +13,32 @@
       <!-- MAIN CONTENT -->
       <div class="main-content">
         <div class="container-fluid">
-          <h3 class="page-title">학생 추가</h3>
+          <h3 class="page-title">학생 정보 수정</h3>
           <div id="toastr-demo" class="panel">
-            <form id="studentaddform" method="post" action="/admin/student_add">
+            <form id="studentaddform" method="post" action="/admin/student_modify/<%=student.id%>">
               <div class="panel-body">
                 <div align="left" class="form-group custom-control-inline">
                   <label for="cln">학생반</label>
                   <div id="cln" class="custom-control-inline">
-                    <select class="form-control" id="classname" name="classname">
-                      <option value="햇님반">햇님반</option>
-                      <option value="별님반">별님반</option>
-                      <option value="달님반">달님반</option>
-                      <option value="꽃님반">꽃님반</option>
+                    <select class="form-control" id="classname" name="classname" >
+                      <option value="햇님반" <% if(student.class == "햇님반") { %> selected <% } %>>햇님반</option>
+                      <option value="별님반" <% if(student.class == "별님반") { %> selected <% } %>>별님반</option>
+                      <option value="달님반" <% if(student.class == "달님반") { %> selected <% } %>>달님반</option>
+                      <option value="꽃님반" <% if(student.class == "꽃님반") { %> selected <% } %>>꽃님반</option>
                     </select>
                     <label for="cln">학생이름</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25" value='<%=student.name%>'>
                   </div>
                 </div>
 
                 <div class="form-group" align="left">
                   <label for="cln">생일</label>
-                  <input id="birth" name="birth" type="date">
+                  <input id="birth" name="birth" type="date" value='<%=student.birth%>'>
                 </div>
 
                 <div class="form-group" align="left">
                   <label for="cln">출입코드</label>
-                  <input type="text" class="form-control" id="rfid" name="rfid" placeholder="" size=" 25">
+                  <input type="text" class="form-control" id="rfid" name="rfid" placeholder="" size=" 25" value='<%=student.rfid_key%>'>
                 </div>
                 <div class="form-group" align="center">
                   <button type="submit" class="btn btn-primary" id="registerBtn">저장</button>

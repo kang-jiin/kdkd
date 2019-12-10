@@ -78,8 +78,6 @@ app.post('/login', (req, res) => {
                 sess.grade = results[0].grade;
                 req.session.save(() => {
                     connection.release();
-                    console.log(results[0].id);
-                    console.log(results[0].name);
                     res.redirect('/');
                 });
             } else {
@@ -123,30 +121,36 @@ app.get('/inout', (req, res) =>{
 app.get('/admin', (req, res) =>{
     let class_values = ["햇님반", "별님반", "달님반", "꽃님반"];
     let select_student = `
-    select * from student 
+    select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
+    from student 
     where class = ?`
 
     pool.getConnection((err, connection) => {
         connection.query(select_student, class_values[0], (err, result1)=>{
             if (err) {
                 console.log(err);
+                connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.query(select_student, class_values[1], (err, result2)=>{
                 if (err) {
                     console.log(err);
+                    connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
                 connection.query(select_student, class_values[2], (err, result3)=>{
                     if (err) {
                         console.log(err);
+                        connection.release();
                         res.status(500).send('Internal Server Error!!!')
                     }
                     connection.query(select_student, class_values[3], (err, result4)=>{
                         if (err) {
                             console.log(err);
+                            connection.release();
                             res.status(500).send('Internal Server Error!!!')
                         }
+                        connection.release();
                         res.render('admin/admin', {student1: result1, student2: result2, student3: result3, student4: result4});
                     });
                 });
@@ -158,6 +162,77 @@ app.get('/admin', (req, res) =>{
 
 app.get('/admin/student_add', (req, res) =>{
     res.render('admin/student_add');
+});
+
+app.post('/admin/student_add', (req, res) =>{
+    let classname = req.body.classname;
+    let name = req.body.name;
+    let birth = req.body.birth;
+    let rfid = req.body.rfid;
+    
+    let values = [classname, name, birth, rfid];
+    let student_insert = `
+    insert into student (class, name, birth, rfid_key)
+    values(?, ?, ?, ?)`;
+
+    pool.getConnection((err, connection) => {
+        connection.query(student_insert, values, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.redirect('/admin'); 
+        });
+    });
+});
+
+app.get('/admin/student_modify/:num', (req, res) =>{
+    var num = req.params.num;
+    let select_student = `
+    select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
+    from student 
+    where id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_student, num, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.render('admin/student_modify', {student: result[0]});
+        });
+    });
+});
+
+app.post('/admin/student_modify/:num', (req, res) => {
+    var num = req.params.num;
+    let classname = req.body.classname;
+    let name = req.body.name;
+    let birth = req.body.birth;
+    let rfid = req.body.rfid;
+
+    let values = [classname, name, birth, rfid, num];
+    let student_update = `
+    update student
+    set class=?, name=?, birth=?, rfid_key=?
+    where id=?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(student_update, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.redirect('/admin');
+        });
+    });
 });
 
 app.get('/signup', (req, res) =>{

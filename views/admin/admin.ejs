@@ -26,7 +26,7 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>#</th>
+												<th>ID</th>
 												<th>이름</th>
 												<th>생일</th>
 												<th>RFID KEY</th>
@@ -34,7 +34,7 @@
 										</thead>
 										<tbody>
 											<% student1.forEach(function(student){ %>
-											<tr onclick="location.href = '/student/<%=student1.id%>';">
+											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -57,7 +57,7 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>#</th>
+												<th>ID</th>
 												<th>이름</th>
 												<th>생일</th>
 												<th>RFID KEY</th>
@@ -65,7 +65,7 @@
 										</thead>
 										<tbody>
 											<% student2.forEach(function(student){ %>
-											<tr onclick="location.href = '/student/<%=student1.id%>';">
+											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -90,7 +90,7 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>#</th>
+												<th>ID</th>
 												<th>이름</th>
 												<th>생일</th>
 												<th>RFID KEY</th>
@@ -98,7 +98,7 @@
 										</thead>
 										<tbody>
 											<% student3.forEach(function(student){ %>
-											<tr onclick="location.href = '/student/<%=student1.id%>';">
+											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -121,7 +121,7 @@
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>#</th>
+												<th>ID</th>
 												<th>이름</th>
 												<th>생일</th>
 												<th>RFID KEY</th>
@@ -129,7 +129,7 @@
 										</thead>
 										<tbody>
 											<% student4.forEach(function(student){ %>
-											<tr onclick="location.href = '/student/<%=student1.id%>';">
+											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
