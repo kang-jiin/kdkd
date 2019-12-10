@@ -129,7 +129,24 @@ app.get('/admin/student_add', (req, res) =>{
 });
 
 app.get('/signup', (req, res) =>{
-    res.render('user/signup');
+    let get_id =`
+        select id
+        from user
+    `;
+    let ids = new Array();
+    pool.getConnection((err, connection) => {
+        connection.query(get_id, (err, results, fields)=>{
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error!!!')
+            }
+            
+            for(var i =0; i<results.length; i++)
+                ids.push(results[i].id);
+            console.log(ids);
+            res.render('user/signup', {ids :ids});    
+        });    
+    });
 });
 app.post('/signup', (req, res)=>{
     let id = req.body.id;
