@@ -99,7 +99,7 @@ app.get('/mypage', (req, res) =>{
         where id = ?
     `;
     let student_data_query=`
-        select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
+        select id, name, class, date_format(birth, '%Y-%m-%d') as birth
         from relation, student
         where relation.parents_id = ? and
         relation.student_id = student.id

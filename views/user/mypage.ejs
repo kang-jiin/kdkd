@@ -100,32 +100,28 @@
 									</div>
 									<label for="cln">학생반</label>
 									<div id="form-group" class="custom-control-inline">
-										<select class="form-control" id="classname" name="classname" value="<%=student[0].class%>">
+										<select class="form-control" id="classname" name="classname"
+											value="<%=student[0].class%>">
 											<option value="햇님반">햇님반</option>
 											<option value="별님반">별님반</option>
 											<option value="달님반">달님반</option>
 											<option value="꽃님반">꽃님반</option>
 										</select>
 										<label for="cln">학생이름</label>
-										<input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25" value="<%=student[0].name%>">
+										<input type="text" class="form-control" id="name" name="name" placeholder=""
+											size=" 25" value="<%=student[0].name%>">
 									</div>
-						
-
-							<div class="form-group">
-								<label for="cln">생일</label>
-								<input id="birth" name="birth" type="date" value="<%=student[0].birth%>">
+									<div class="form-group">
+										<label for="cln">생일</label>
+										<input id="birth" name="birth" type="date" value="<%=student[0].birth%>">
+									</div>
+									<div class="form-group" align="center">
+										<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+									</div>
+									
+								</form>
 							</div>
-
-							<div class="form-group">
-								<label for="cln">출입코드</label>
-								<input type="text" class="form-control" id="rfid" name="rfid" placeholder="" size=" 25" value="<%=student[0].rfid_key%>">
-							</div>
-							<div class="form-group" align="center">
-								<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
-							</div>
-							</form>
 						</div>
-					</div>
 					</div>
 				</div>
 			</div>
