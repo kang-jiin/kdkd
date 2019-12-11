@@ -4,7 +4,6 @@
 <%- include('../includes/head.ejs') %>
 
 <body>
-	<!-- WRAPPER -->
 	<div id="wrapper">
 		<%- include('../includes/navbar.ejs') %>
 		<%- include('../includes/sidebar.ejs') %>
@@ -13,225 +12,93 @@
 			<!-- MAIN CONTENT -->
 			<div class="main-content">
 				<div class="container-fluid">
-					<div class="panel panel-profile">
-						<div class="clearfix">
-							<!-- LEFT COLUMN -->
-							<div class="profile-left">
-								<!-- PROFILE HEADER -->
-								<div class="profile-header">
-									<div class="overlay"></div>
-									<div class="profile-main">
-										<img src="/img/user-medium.png" class="img-circle" alt="Avatar">
-										<h3 class="name">여기 이름넣을꺼임</h3>
-										<span class="online-status status-available">Available</span>
-									</div>
-									<div class="profile-stat">
-										<div class="row">
-											<div class="col-md-4 stat-item">
-												45 <span>Projects</span>
-											</div>
-											<div class="col-md-4 stat-item">
-												15 <span>Awards</span>
-											</div>
-											<div class="col-md-4 stat-item">
-												2174 <span>Points</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<!-- END PROFILE HEADER -->
-								<!-- PROFILE DETAIL -->
-								<div class="profile-detail">
-									<div class="profile-info">
-										<h4 class="heading">Basic Info</h4>
-										<ul class="list-unstyled list-justify">
-											<li>Birthdate <span>24 Aug, 2016</span></li>
-											<li>Mobile <span>(124) 823409234</span></li>
-											<li>Email <span>samuel@mydomain.com</span></li>
-											<li>Website <span><a href="https://www.themeineed.com">www.themeineed.com</a></span></li>
-										</ul>
-									</div>
-									<div class="profile-info">
-										<h4 class="heading">Social</h4>
-										<ul class="list-inline social-icons">
-											<li><a href="#" class="facebook-bg"><i class="fa fa-facebook"></i></a></li>
-											<li><a href="#" class="twitter-bg"><i class="fa fa-twitter"></i></a></li>
-											<li><a href="#" class="google-plus-bg"><i class="fa fa-google-plus"></i></a></li>
-											<li><a href="#" class="github-bg"><i class="fa fa-github"></i></a></li>
-										</ul>
-									</div>
-									<div class="profile-info">
-										<h4 class="heading">About</h4>
-										<p>Interactively fashion excellent information after distinctive outsourcing.</p>
-									</div>
-									<div class="text-center"><a href="#" class="btn btn-primary">Edit Profile</a></div>
-								</div>
-								<!-- END PROFILE DETAIL -->
+					<h3 class="page-title">개인정보 수정</h3>
+					<div class="panel panel-headline" style="margin-left: 30%; margin-right: 30%;">
+						<div class="panel-body">
+							<div class="panel-heading">
+								<h3 class="panel-title">개인정보 수정</h3>
 							</div>
-							<!-- END LEFT COLUMN -->
-							<!-- RIGHT COLUMN -->
-							<div class="profile-right">
-								<h4 class="heading">Samuel's Awards</h4>
-								<!-- AWARDS -->
-								<div class="awards">
-									<div class="row">
-										<div class="col-md-3 col-sm-6">
-											<div class="award-item">
-												<div class="hexagon">
-													<span class="lnr lnr-sun award-icon"></span>
-												</div>
-												<span>Most Bright Idea</span>
-											</div>
-										</div>
-										<div class="col-md-3 col-sm-6">
-											<div class="award-item">
-												<div class="hexagon">
-													<span class="lnr lnr-clock award-icon"></span>
-												</div>
-												<span>Most On-Time</span>
-											</div>
-										</div>
-										<div class="col-md-3 col-sm-6">
-											<div class="award-item">
-												<div class="hexagon">
-													<span class="lnr lnr-magic-wand award-icon"></span>
-												</div>
-												<span>Problem Solver</span>
-											</div>
-										</div>
-										<div class="col-md-3 col-sm-6">
-											<div class="award-item">
-												<div class="hexagon">
-													<span class="lnr lnr-heart award-icon"></span>
-												</div>
-												<span>Most Loved</span>
-											</div>
+							<div style="margin-left: 5%; margin-right: 5%;">
+								<form id="userUpdateform" method="post" action="/mypage">
+									<div class="form-group" align="left">
+										<label for="name">이름</label>
+										<input type="text" class="form-control" id="name" name="name" placeholder="" value="<%=article.name%>">
+									</div>
+									<div class="form-group" align="left">
+										<label for="">아이디</label>
+										<input type="text" class="form-control" id="id" name="id"
+											onkeyup="javascript:idcheck();" placeholder="" value="<%=article.id%>" readonly />
+										<div id="resultview"></div>
+									</div>
+									<div class="form-group" align="left">
+										<label for="">비밀번호</label>
+										<input type="password" class="form-control" id="pwd1" name="pass" value="<%=article.password%>"
+											placeholder="">
+									</div>
+									<div class="form-group" align="left">
+										<label for="">비밀번호재입력</label>
+										<input type="password" class="form-control" id="pwd2" name="passcheck"
+											value="<%=article.password%>" placeholder="">
+									</div>
+
+									<div class="alert alert-success" id="alert-success">비밀번호가 일치합니다.</div>
+									<div class="alert alert-danger" id="alert-danger">비밀번호가 일치하지 않습니다.</div>
+
+									<div class="form-group" align="left">
+										<label for="email">이메일</label><br>
+										<div id="email" class="custom-control-inline">
+											<input type="text" class="form-control" id="emailid" name="emailid"
+												placeholder="" size="25" value="<%=article.emailid%>">
+											@
+											<select class="form-control" id="emaildomain" name="emaildomain"
+												value="<%=article.emaildomain%>">
+												<option value="naver.com">naver.com</option>
+												<option value="google.com">google.com</option>
+												<option value="daum.net">daum.net</option>
+												<option value="nate.com">nate.com</option>
+												<option value="hanmail.net">hanmail.net</option>
+											</select>
 										</div>
 									</div>
-									<div class="text-center"><a href="#" class="btn btn-default">See all awards</a></div>
-								</div>
-								<!-- END AWARDS -->
-								<!-- TABBED CONTENT -->
-								<div class="custom-tabs-line tabs-line-bottom left-aligned">
-									<ul class="nav" role="tablist">
-										<li class="active"><a href="#tab-bottom-left1" role="tab" data-toggle="tab">Recent Activity</a></li>
-										<li><a href="#tab-bottom-left2" role="tab" data-toggle="tab">Projects <span class="badge">7</span></a></li>
-									</ul>
-								</div>
-								<div class="tab-content">
-									<div class="tab-pane fade in active" id="tab-bottom-left1">
-										<ul class="list-unstyled activity-timeline">
-											<li>
-												<i class="fa fa-comment activity-icon"></i>
-												<p>Commented on post <a href="#">Prototyping</a> <span class="timestamp">2 minutes ago</span></p>
-											</li>
-											<li>
-												<i class="fa fa-cloud-upload activity-icon"></i>
-												<p>Uploaded new file <a href="#">Proposal.docx</a> to project <a href="#">New Year Campaign</a> <span class="timestamp">7 hours ago</span></p>
-											</li>
-											<li>
-												<i class="fa fa-plus activity-icon"></i>
-												<p>Added <a href="#">Martin</a> and <a href="#">3 others colleagues</a> to project repository <span class="timestamp">Yesterday</span></p>
-											</li>
-											<li>
-												<i class="fa fa-check activity-icon"></i>
-												<p>Finished 80% of all <a href="#">assigned tasks</a> <span class="timestamp">1 day ago</span></p>
-											</li>
-										</ul>
-										<div class="margin-top-30 text-center"><a href="#" class="btn btn-default">See all activity</a></div>
-									</div>
-									<div class="tab-pane fade" id="tab-bottom-left2">
-										<div class="table-responsive">
-											<table class="table project-table">
-												<thead>
-													<tr>
-														<th>Title</th>
-														<th>Progress</th>
-														<th>Leader</th>
-														<th>Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td><a href="#">Spot Media</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-																	<span>60% Complete</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user2.png" alt="Avatar" class="avatar img-circle"> <a href="#">Michael</a></td>
-														<td><span class="label label-success">ACTIVE</span></td>
-													</tr>
-													<tr>
-														<td><a href="#">E-Commerce Site</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" style="width: 33%;">
-																	<span>33% Complete</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user1.png" alt="Avatar" class="avatar img-circle"> <a href="#">Antonius</a></td>
-														<td><span class="label label-warning">PENDING</span></td>
-													</tr>
-													<tr>
-														<td><a href="#">Project 123GO</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar" role="progressbar" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100" style="width: 68%;">
-																	<span>68% Complete</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user1.png" alt="Avatar" class="avatar img-circle"> <a href="#">Antonius</a></td>
-														<td><span class="label label-success">ACTIVE</span></td>
-													</tr>
-													<tr>
-														<td><a href="#">Wordpress Theme</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;">
-																	<span>75%</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user2.png" alt="Avatar" class="avatar img-circle"> <a href="#">Michael</a></td>
-														<td><span class="label label-success">ACTIVE</span></td>
-													</tr>
-													<tr>
-														<td><a href="#">Project 123GO</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
-																	<span>100%</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user1.png" alt="Avatar" class="avatar img-circle" /> <a href="#">Antonius</a></td>
-														<td><span class="label label-default">CLOSED</span></td>
-													</tr>
-													<tr>
-														<td><a href="#">Redesign Landing Page</a></td>
-														<td>
-															<div class="progress">
-																<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
-																	<span>100%</span>
-																</div>
-															</div>
-														</td>
-														<td><img src="/img/user5.png" alt="Avatar" class="avatar img-circle" /> <a href="#">Jason</a></td>
-														<td><span class="label label-default">CLOSED</span></td>
-													</tr>
-												</tbody>
-											</table>
+									<div class="form-group" align="left">
+										<label for="tel">전화번호</label>
+										<div id="tel" class="custom-control-inline">
+											<select class="form-control" id="tel1" name="tel1" value="<%=article.tel1%>">
+												<option value="010">010</option>
+												<option value="02">02</option>
+												<option value="031">031</option>
+												<option value="032">032</option>
+												<option value="041">041</option>
+												<option value="051">051</option>
+												<option value="061">061</option>
+											</select> _
+											<input type="text" class="form-control" id="tel2" name="tel2"
+												onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'
+												maxlength=4 value="<%=article.tel2%>"> _
+											<input type="text" class="form-control" id="tel3" name="tel3"
+												onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'
+												maxlength=4 value="<%=article.tel3%>">
 										</div>
 									</div>
-								</div>
-								<!-- END TABBED CONTENT -->
+									<div class="form-group" align="left">
+										<label for="">주소</label><br>
+										<input class="form-control" style="width: 40%; display: inline;" name="addr1"
+											id="addr1" type="text" readonly="readonly" value="<%=article.zip_code%>">
+										<button type="button" class="btn btn-warning" onclick="execPostCode();"><i
+												class="fa fa-search"></i> 우편번호 찾기</button>
+									</div>
+									<div class="form-group">
+										<input class="form-control" style="top: 5px;" name="addr2" id="addr2"
+											type="text" readonly="readonly" value="<%=article.address%>" />
+									</div>
+									<div class="form-group">
+										<input class="form-control" name="addr3" id="addr3" type="text" value="<%=article.address_detail%>" />
+									</div>
+									<div class="form-group" align="center">
+										<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+									</div>
+								</form>
 							</div>
-							<!-- END RIGHT COLUMN -->
 						</div>
 					</div>
 				</div>
@@ -239,13 +106,7 @@
 			<!-- END MAIN CONTENT -->
 		</div>
 		<!-- END MAIN -->
-		<div class="clearfix"></div>
-		<footer>
-			<div class="container-fluid">
-				<p class="copyright">Shared by <i class="fa fa-love"></i><a href="https://bootstrapthemes.co">BootstrapThemes</a>
-</p>
-			</div>
-		</footer>
+
 	</div>
 	<!-- END WRAPPER -->
 	<!-- Javascript -->
@@ -253,6 +114,9 @@
 	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 	<script src="/scripts/klorofil-common.js"></script>
+	<script src="/js/signup.js"></script>
+	<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+	<script src="/js/addressapi.js"></script>
 </body>
 
 </html>

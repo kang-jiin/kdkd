@@ -91,7 +91,23 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/mypage', (req, res) =>{
-    res.render('user/mypage');
+    let userid = req.session.userid;
+    let user_data_query = `
+        select *
+        from user
+        where id = ?
+    `;
+    pool.getConnection((err, connection) =>{
+        connection.query(user_data_query, [userid], (err, results, fields) =>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.render('user/mypage', {article : results[0]});    
+        });
+    });
 });
 
 app.get('/logout', (req, res) =>{
