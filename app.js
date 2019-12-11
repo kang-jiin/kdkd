@@ -98,15 +98,28 @@ app.get('/mypage', (req, res) =>{
         from user
         where id = ?
     `;
+    let student_data_query=`
+        select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
+        from relation, student
+        where relation.parents_id = ? and
+        relation.student_id = student.id
+    `
     pool.getConnection((err, connection) =>{
-        connection.query(user_data_query, [userid], (err, results, fields) =>{
+        connection.query(user_data_query, [userid], (err, userresults, fields) =>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.release();
-            res.render('user/mypage', {article : results[0]});    
+            connection.query(student_data_query, [userid], (err, studentresults, fields)=>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.release();
+                res.render('user/mypage', {article : userresults[0], student: studentresults});        
+            });            
         });
     });
 });
