@@ -98,15 +98,133 @@ app.get('/mypage', (req, res) =>{
         from user
         where id = ?
     `;
+    let student_data_query=`
+        select id, name, class, date_format(birth, '%Y-%m-%d') as birth
+        from relation, student
+        where relation.parents_id = ? and
+        relation.student_id = student.id
+    `
     pool.getConnection((err, connection) =>{
-        connection.query(user_data_query, [userid], (err, results, fields) =>{
+        connection.query(user_data_query, [userid], (err, userresults, fields) =>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
+            connection.query(student_data_query, [userid], (err, studentresults, fields)=>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.release();
+                res.render('user/mypage', {article : userresults[0], student: studentresults});        
+            });            
+        });
+    });
+});
+
+app.post('/mypage', (req, res) =>{
+    const sess = req.session;
+    
+    let id = sess.userid;
+    let name = req.body.name;
+    let password = req.body.pass;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+    let tel1 = req.body.tel1;
+    let tel2 = req.body.tel2;
+    let tel3 = req.body.tel3;
+    let zip_code = req.body.addr1;
+    let address = req.body.addr2;
+    let detail_address = req.body.addr3;
+    
+    let values = [password, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address, id];
+    let users_update = `
+    update user set
+    password=?, name=?, emailid=?, emaildomain=?, 
+    tel1=?, tel2=?, tel3=?, zip_code=?, address=?, detail_address=?
+    where id=?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(users_update, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            sess.userid = id;
+            sess.name = name;
+            sess.grade = "G";
+            req.session.save(() => {
+                res.redirect('/');
+            });
+        });
+    });
+});
+
+app.get('/user_student_add',(req, res)=>{
+    let get_id = `
+        select id
+        from user
+    `;
+    let ids = new Array();
+    pool.getConnection((err, connection) => {
+        connection.query(get_id, (err, results, fields) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            for (var i = 0; i < results.length; i++)
+                ids.push(results[i].id);
+            if (sign_up_err == 1)
+                msg = "정보가 없습니다";
+            else
+                msg = "정확하게 입력해주세요";
+            sign_up_err = 0;
             connection.release();
-            res.render('user/mypage', {article : results[0]});    
+            res.render('user/user_student_add', {ids : ids, msg:msg});    
+        }); 
+    });
+});
+
+app.post('/user_student_add', (req, res) => {
+    const sess = req.session;
+    let id = sess.userid;
+    let classname = req.body.classname;
+    let name = req.body.name;
+    let values = [classname, name];
+
+    let select_student = `
+    select * from student 
+    where class = ? and
+    name = ?
+    `;
+    let relation_insert = `
+    insert into relation (student_id, parents_id)
+    values(?, ?)
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_student, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            if (result.length > 0) {
+                let realation_values = [result[0].id, id];
+                connection.query(relation_insert, realation_values, (err, result) => {
+                    connection.release();
+                    res.redirect('/home');
+                });
+            } else{
+                sign_up_err=1;
+                connection.release();
+                res.redirect('/user_student_add');
+            }
         });
     });
 });
@@ -373,6 +491,7 @@ app.get('/signup', (req, res) => {
         }); 
     });
 });
+
 app.post('/signup', (req, res) => {
     let id = req.body.id;
     let name = req.body.name;
@@ -397,10 +516,12 @@ app.post('/signup', (req, res) => {
     let select_student = `
     select * from student 
     where class = ? and
-    name = ?`
+    name = ?
+    `;
     let relation_insert = `
     insert into relation (student_id, parents_id)
-    values(?, ?)`;
+    values(?, ?)
+    `;
     pool.getConnection((err, connection) => {
         connection.query(user_insert, values, (err, result) => {
             if (err) {
