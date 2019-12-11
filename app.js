@@ -123,6 +123,7 @@ app.get('/mypage', (req, res) =>{
         });
     });
 });
+
 app.post('/mypage', (req, res) =>{
     const sess = req.session;
     
@@ -162,9 +163,70 @@ app.post('/mypage', (req, res) =>{
     });
 });
 
-
 app.get('/user_student_add',(req, res)=>{
-    res.render('user/user_student_add');
+    let get_id = `
+        select id
+        from user
+    `;
+    let ids = new Array();
+    pool.getConnection((err, connection) => {
+        connection.query(get_id, (err, results, fields) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            for (var i = 0; i < results.length; i++)
+                ids.push(results[i].id);
+            if (sign_up_err == 1)
+                msg = "정보가 없습니다";
+            else
+                msg = "정확하게 입력해주세요";
+            sign_up_err = 0;
+            connection.release();
+            res.render('user/user_student_add', {ids : ids, msg:msg});    
+        }); 
+    });
+});
+
+app.post('/user_student_add', (req, res) => {
+    const sess = req.session;
+    let id = sess.userid;
+    let classname = req.body.classname;
+    let name = req.body.name;
+    let values = [classname, name];
+
+    let select_student = `
+    select * from student 
+    where class = ? and
+    name = ?
+    `;
+    let relation_insert = `
+    insert into relation (student_id, parents_id)
+    values(?, ?)
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_student, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            if (result.length > 0) {
+                let realation_values = [result[0].id, id];
+                connection.query(relation_insert, realation_values, (err, result) => {
+                    connection.release();
+                    res.redirect('/home');
+                });
+            } else{
+                sign_up_err=1;
+                connection.release();
+                res.redirect('/user_student_add');
+            }
+        });
+    });
 });
 
 app.get('/logout', (req, res) => {
@@ -372,6 +434,7 @@ app.get('/signup', (req, res) => {
         }); 
     });
 });
+
 app.post('/signup', (req, res) => {
     let id = req.body.id;
     let name = req.body.name;
@@ -396,10 +459,12 @@ app.post('/signup', (req, res) => {
     let select_student = `
     select * from student 
     where class = ? and
-    name = ?`
+    name = ?
+    `;
     let relation_insert = `
     insert into relation (student_id, parents_id)
-    values(?, ?)`;
+    values(?, ?)
+    `;
     pool.getConnection((err, connection) => {
         connection.query(user_insert, values, (err, result) => {
             if (err) {
