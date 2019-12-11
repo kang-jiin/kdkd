@@ -123,6 +123,49 @@ app.get('/mypage', (req, res) =>{
         });
     });
 });
+app.post('/mypage', (req, res) =>{
+    const sess = req.session;
+    
+    let id = sess.userid;
+    let name = req.body.name;
+    let password = req.body.pass;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+    let tel1 = req.body.tel1;
+    let tel2 = req.body.tel2;
+    let tel3 = req.body.tel3;
+    let zip_code = req.body.addr1;
+    let address = req.body.addr2;
+    let detail_address = req.body.addr3;
+    
+    let values = [password, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address, id];
+    let users_update = `
+    update user set
+    password=?, name=?, emailid=?, emaildomain=?, 
+    tel1=?, tel2=?, tel3=?, zip_code=?, address=?, detail_address=?
+    where id=?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(users_update, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            sess.userid = id;
+            sess.name = name;
+            sess.grade = "G";
+            req.session.save(() => {
+                res.redirect('/');
+            });
+        });
+    });
+});
+
+
+app.get('/user_student_add',(req, res)=>{
+    res.render('user/user_student_add');
+});
 
 app.get('/logout', (req, res) => {
     const sess = req.session;

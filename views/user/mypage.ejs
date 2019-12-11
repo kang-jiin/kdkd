@@ -97,41 +97,54 @@
 									<div class="form-group">
 										<input class="form-control" name="addr3" id="addr3" type="text"
 											value="<%=article.address_detail%>" />
-									</div>
-									<label for="cln">학생반</label>
-									<div id="form-group" class="custom-control-inline">
-										<select class="form-control" id="classname" name="classname"
-											value="<%=student[0].class%>">
-											<option value="햇님반">햇님반</option>
-											<option value="별님반">별님반</option>
-											<option value="달님반">달님반</option>
-											<option value="꽃님반">꽃님반</option>
-										</select>
-										<label for="cln">학생이름</label>
-										<input type="text" class="form-control" id="name" name="name" placeholder=""
-											size=" 25" value="<%=student[0].name%>">
-									</div>
-									<div class="form-group">
-										<label for="cln">생일</label>
-										<input id="birth" name="birth" type="date" value="<%=student[0].birth%>">
-									</div>
-									<div class="form-group" align="center">
-										<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
-									</div>
-									
+										<div class="form-group" align="center">
+											<br>
+											<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+										</div>
 								</form>
 							</div>
 						</div>
 					</div>
 				</div>
+				<div class="container-fluid">
+
+					<div class="panel panel-headline" style="margin-left: 30%; margin-right: 30%;">
+						<div class="panel-body">
+							<div style="margin-left: 5%; margin-right: 5%;">
+								<h3 class="page-title">학생 정보</h3>
+								<div class="panel">
+									<div class="panel-body">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th>반</th>
+													<th>이름</th>
+													<th>생일</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% student.forEach(function(student1){ %>
+												<tr>
+													<td><%=student1.class%></td>
+													<td><%=student1.name%></td>
+													<td><%=student1.birth%></td>
+												</tr>
+												<% }); %>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<a href="user_student_add"><button class="btn btn-secondary" type="button" style="margin-left: 40%;">학생 추가</button></a>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
+
 		</div>
 		<!-- END MAIN CONTENT -->
 	</div>
 	<!-- END MAIN -->
-
-	</div>
-	<!-- END WRAPPER -->
 	<!-- Javascript -->
 	<script src="/vendor/jquery/jquery.min.js"></script>
 	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
