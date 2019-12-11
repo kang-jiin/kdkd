@@ -8,7 +8,7 @@ const app = express();
 const http = require('http').Server(app);
 //var upload = multer({ dest: 'uploads/' });
 
-var sign_up_err=0;
+var sign_up_err = 0;
 
 app.locals.pretty = true;
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
@@ -20,7 +20,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.locals.user = req.session;
     next();
 });
@@ -45,7 +45,7 @@ http.listen(8888, () => {
 
 app.get('/', (req, res) => {
     const sess = req.session;
-    if(sess.userid) {
+    if (sess.userid) {
         res.render('home');
     }
     else {
@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/login', (req, res) =>{
+app.get('/login', (req, res) => {
     const sess = req.session;
     res.render('user/login', { pass: true });
 });
@@ -90,37 +90,37 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.get('/mypage', (req, res) =>{
+app.get('/mypage', (req, res) => {
     res.render('user/mypage');
 });
 
-app.get('/logout', (req, res) =>{
+app.get('/logout', (req, res) => {
     const sess = req.session;
     sess.destroy();
     res.redirect('/login');
 });
 
-app.get('/home', (req, res) =>{
+app.get('/home', (req, res) => {
     res.render('home');
 });
 
-app.get('/notice', (req, res) =>{
+app.get('/notice', (req, res) => {
     res.render('notice/notice');
 });
 
-app.get('/board', (req, res) =>{
+app.get('/board', (req, res) => {
     res.render('board/board');
 });
 
-app.get('/calendar', (req, res) =>{
+app.get('/calendar', (req, res) => {
     res.render('calendar/calendar');
 });
 
-app.get('/inout', (req, res) =>{
+app.get('/inout', (req, res) => {
     res.render('inout/inout');
 });
 
-app.get('/admin', (req, res) =>{
+app.get('/admin', (req, res) => {
     let class_values = ["햇님반", "별님반", "달님반", "꽃님반"];
     let select_student = `
     select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
@@ -128,69 +128,69 @@ app.get('/admin', (req, res) =>{
     where class = ?`
 
     pool.getConnection((err, connection) => {
-        connection.query(select_student, class_values[0], (err, result1)=>{
+        connection.query(select_student, class_values[0], (err, result1) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_student, class_values[1], (err, result2)=>{
+            connection.query(select_student, class_values[1], (err, result2) => {
                 if (err) {
                     console.log(err);
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
-                connection.query(select_student, class_values[2], (err, result3)=>{
+                connection.query(select_student, class_values[2], (err, result3) => {
                     if (err) {
                         console.log(err);
                         connection.release();
                         res.status(500).send('Internal Server Error!!!')
                     }
-                    connection.query(select_student, class_values[3], (err, result4)=>{
+                    connection.query(select_student, class_values[3], (err, result4) => {
                         if (err) {
                             console.log(err);
                             connection.release();
                             res.status(500).send('Internal Server Error!!!')
                         }
                         connection.release();
-                        res.render('admin/admin', {student1: result1, student2: result2, student3: result3, student4: result4});
+                        res.render('admin/admin', { student1: result1, student2: result2, student3: result3, student4: result4 });
                     });
                 });
             });
         });
     });
-    
+
 });
 
-app.get('/admin/student_add', (req, res) =>{
+app.get('/admin/student_add', (req, res) => {
     res.render('admin/student_add');
 });
 
-app.post('/admin/student_add', (req, res) =>{
+app.post('/admin/student_add', (req, res) => {
     let classname = req.body.classname;
     let name = req.body.name;
     let birth = req.body.birth;
     let rfid = req.body.rfid;
-    
+
     let values = [classname, name, birth, rfid];
     let student_insert = `
     insert into student (class, name, birth, rfid_key)
     values(?, ?, ?, ?)`;
 
     pool.getConnection((err, connection) => {
-        connection.query(student_insert, values, (err, result)=>{
+        connection.query(student_insert, values, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
-            res.redirect('/admin'); 
+            res.redirect('/admin');
         });
     });
 });
 
-app.get('/admin/student_modify/:num', (req, res) =>{
+app.get('/admin/student_modify/:num', (req, res) => {
     var num = req.params.num;
     let select_student = `
     select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
@@ -199,14 +199,14 @@ app.get('/admin/student_modify/:num', (req, res) =>{
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(select_student, num, (err, result)=>{
+        connection.query(select_student, num, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
-            res.render('admin/student_modify', {student: result[0]});
+            res.render('admin/student_modify', { student: result[0] });
         });
     });
 });
@@ -237,31 +237,67 @@ app.post('/admin/student_modify/:num', (req, res) => {
     });
 });
 
-app.get('/signup', (req, res) =>{
-    let get_id =`
+app.get('/admin/student_delete/:num', (req, res) => {
+    var num = req.params.num;
+    let relation_check = `
+    select * from relation
+    where student_id = ?
+    `;
+    let student_delete = `
+    delete from student 
+    where id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(relation_check, num, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            if (result.length > 0) {
+                res.redirect('/admin');
+            }
+            else {
+                connection.query(student_delete, num, (err) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    connection.release();
+                    res.redirect('/admin');
+                });
+            }
+        });
+    });
+});
+
+app.get('/signup', (req, res) => {
+    let get_id = `
         select id
         from user
     `;
     let ids = new Array();
     pool.getConnection((err, connection) => {
-        connection.query(get_id, (err, results, fields)=>{
+        connection.query(get_id, (err, results, fields) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Internal Server Error!!!')
             }
-            
-            for(var i =0; i<results.length; i++)
+
+            for (var i = 0; i < results.length; i++)
                 ids.push(results[i].id);
-            if(sign_up_err==1)
-                msg="정보가 없습니다";
+            if (sign_up_err == 1)
+                msg = "정보가 없습니다";
             else
-                msg="정확하게 입력해주세요";
+                msg = "정확하게 입력해주세요";
             sign_up_err = 0;
-            res.render('user/signup', {ids : ids, msg:msg});    
-        });    
+            res.render('user/signup', { ids: ids, msg: msg });
+        });
     });
 });
-app.post('/signup', (req, res)=>{
+app.post('/signup', (req, res) => {
     let id = req.body.id;
     let name = req.body.name;
     let password = req.body.pass;
@@ -290,34 +326,34 @@ app.post('/signup', (req, res)=>{
     insert into relation (student_id, parents_id)
     values(?, ?)`;
     pool.getConnection((err, connection) => {
-        connection.query(user_insert, values, (err, result)=>{
+        connection.query(user_insert, values, (err, result) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_student, values_relation, (err, result)=>{
+            connection.query(select_student, values_relation, (err, result) => {
                 if (err) {
                     console.log(err);
                     res.status(500).send('Internal Server Error!!!')
                 }
-                if(result.length > 0){
+                if (result.length > 0) {
                     let kim = [result[0].id, id];
-                    connection.query(relation_insert, kim, (err, result)=>{
+                    connection.query(relation_insert, kim, (err, result) => {
                         res.redirect('/login');
                     });
-                }else{
-                    sign_up_err=1;
+                } else {
+                    sign_up_err = 1;
                     res.redirect('/signup');
-                }    
-            });        
+                }
+            });
         });
     });
 });
 
-app.get('/pw', (req, res) =>{
-    res.render('user/pw', {msg: "정확하게 입력하세요"});
+app.get('/pw', (req, res) => {
+    res.render('user/pw', { msg: "정확하게 입력하세요" });
 });
-app.post('/pw', (req, res) =>{
+app.post('/pw', (req, res) => {
     const sess = req.session;
 
     let name = req.body.name;

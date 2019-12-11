@@ -6,9 +6,9 @@
         window.onload = function(){
             document.getElementById('id').onkeyup = function(){
                 var ids = new Array();
-                <% ids.forEach((id)=>{ -%>
+                <% ids.forEach((id)=>{ %>
                 ids.push("<%= id%>");
-                <% })-%>
+                <% }) %>
                 var length = <%= ids.length%>;
                 var text = document.getElementById('id').value;
                 var tl = text.length;
