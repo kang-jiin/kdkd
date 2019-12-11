@@ -247,6 +247,7 @@ app.get('/signup', (req, res) =>{
         connection.query(get_id, (err, results, fields)=>{
             if (err) {
                 console.log(err);
+                connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             
@@ -257,6 +258,7 @@ app.get('/signup', (req, res) =>{
             else
                 msg="정확하게 입력해주세요";
             sign_up_err = 0;
+            connection.release();
             res.render('user/signup', {ids : ids, msg:msg});    
         });    
     });
@@ -293,20 +295,24 @@ app.post('/signup', (req, res)=>{
         connection.query(user_insert, values, (err, result)=>{
             if (err) {
                 console.log(err);
+                connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.query(select_student, values_relation, (err, result)=>{
                 if (err) {
                     console.log(err);
+                    connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
                 if(result.length > 0){
                     let kim = [result[0].id, id];
                     connection.query(relation_insert, kim, (err, result)=>{
+                        connection.release();
                         res.redirect('/login');
                     });
                 }else{
                     sign_up_err=1;
+                    connection.release();
                     res.redirect('/signup');
                 }    
             });        
@@ -334,6 +340,7 @@ app.post('/pw', (req, res) =>{
         connection.query(find_idpw_query, values, (err, results) => {
             if (err) {
                 console.log(err);
+                connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
 
@@ -342,9 +349,11 @@ app.post('/pw', (req, res) =>{
                 sess.name = results[0].name;
                 sess.grade = results[0].grade;
                 req.session.save(() => {
+                    connection.release();
                     res.redirect('/mypage');
                 });
             } else {
+                connection.release();
                 res.render('user/pw', { msg: "등록된 계정이 없습니다." });
             }
         });
