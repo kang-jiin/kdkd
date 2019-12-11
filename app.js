@@ -126,7 +126,63 @@ app.get('/notice', (req, res) => {
 });
 
 app.get('/board', (req, res) => {
-    res.render('board/board');
+    let select_board = `
+    select b.id as id, u.name as name, b.title as title, b.content as content, 
+    case
+    when date_format(b.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    then date_format(b.time, '%H:%i:%s')
+    else date_format(b.time, '%Y-%m-%d')
+    end as time, b.hit as hit
+    from board b, user u
+    where b.writer_id = u.id
+    `;
+    pool.getConnection((err, connection) =>{
+        connection.query(select_board, (err, results, fields) =>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.render('board/board', {articles : results}); 
+        });
+    });
+});
+
+app.get('/board/view', (req, res) => {
+    res.render('home');
+});
+
+app.get('/board/write', (req, res) => {
+    res.render('board/write');
+});
+
+app.get('/board/content', (req, res) => {
+    res.render('board/content');
+});
+
+app.post('/board/write', (req, res) => {
+    let writer_id = req.session.userid;
+    let title = req.body.title;
+    let content = req.body.content;
+
+    let values = [writer_id, title, content];
+    let item_insert = `
+        insert into board (writer_id, title, content, time, hit)
+        values (?, ?, ?, now(), 0)
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(item_insert, values, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.release();
+            res.redirect('/board');
+        });
+    });
 });
 
 app.get('/calendar', (req, res) => {
@@ -184,6 +240,7 @@ app.get('/admin/student_add', (req, res) => {
 });
 
 app.post('/admin/student_add', (req, res) => {
+    console.log(req.body);
     let classname = req.body.classname;
     let name = req.body.name;
     let birth = req.body.birth;
