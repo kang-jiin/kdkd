@@ -365,9 +365,77 @@ app.get('/home', (req, res) => {
     res.render('home');
 });
 
+//////////////////////////////////////////////////////////////
+//                      알림장                              //
+//////////////////////////////////////////////////////////////
+
 app.get('/notice', (req, res) => {
-    res.render('notice/notice');
+    let classname;
+    if(req.query.class != undefined) {
+        classname = req.query.class;
+    }
+    else {
+        classname = "햇님반";
+    }
+
+    let select_notice = `
+    select n.id as id, u.name as name, n.title as title, n.content as content, 
+    case
+    when date_format(n.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    then date_format(n.time, '%H:%i:%s')
+    else date_format(n.time, '%Y-%m-%d')
+    end as time
+    from notice n, user u
+    where n.writer_id = u.id
+    and n.class = ?
+    order by time desc
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(select_notice, [classname], (err, results) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.render('notice/notice', { classname: classname, articles: results });
+        });
+    });
 });
+
+app.get('/notice/write', (req, res) => {
+    res.render('notice/write');
+});
+
+app.get('/notice/write_content', (req, res) => {
+    res.render('notice/write_content');
+});
+
+app.post('/notice/write', (req, res) => {
+    let writer_id = req.session.userid;
+    let classname = req.body.classname;
+    let title = req.body.title;
+    let content = req.body.content;
+
+    let values = [writer_id, classname, title, content];
+    let notice_insert = `
+        insert into notice (writer_id, class, title, content, time)
+        values (?, ?, ?, ?, now())
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(notice_insert, values, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.release();
+            res.redirect('/notice');
+        });
+    });
+});
+
 
 //////////////////////////////////////////////////////////////
 //                      게시판                              //
@@ -465,13 +533,13 @@ app.post('/board/write', (req, res) => {
     let content = req.body.content;
 
     let values = [writer_id, title, content];
-    let item_insert = `
+    let board_insert = `
         insert into board (writer_id, title, content, time, hit)
         values (?, ?, ?, now(), 0)
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(item_insert, values, (err) => {
+        connection.query(board_insert, values, (err) => {
             if (err) {
                 console.log(err);
                 connection.release();

@@ -19,19 +19,14 @@
 
 				<div class="container-fluid">
 					<h3 class="page-title">알림장</h3>
-					<div class="dropup">
-						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-							반선택
-						</button>
-						<div class="dropdown-menu">
-							<a class="dropdown-item" href="#">햇님반</a>
-							<a class="dropdown-item" href="#">달님반</a>
-							<a class="dropdown-item" href="#">별님반</a>
-							<a class="dropdown-item" href="#">꽃님반</a>
-						</div>
-					</div>
-					<div align="right">
-						<a href="/"><button class="btn btn-primary">글쓰기</button></a>
+					<div class="">
+						<select class="form-control" id="classname" name="classname" 
+						onchange="if(this.value) location.href='/notice?class='+this.value;">
+							<option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
+							<option value="별님반" <% if(classname == "별님반") { %> selected <% } %>>별님반</option>
+							<option value="달님반" <% if(classname == "달님반") { %> selected <% } %>>달님반</option>
+							<option value="꽃님반" <% if(classname == "꽃님반") { %> selected <% } %>>꽃님반</option>
+						</select>
 					</div>
 					<div class="panel panel-headline">
 						<div class="panel-body">
@@ -46,21 +41,28 @@
 										</tr>
 									</thead>
 									<tbody>
-										<!-- 여기부터 -->
 										<tr>
-											<td class="text-center">ㄹㄴㅇ</td>
-											<td class="text-center">ㄹㄴㅇㄹㄴㅇ</a></td>
-											<td class="text-left">ㄹㄴㅇ</td>
-											<td class="text-center">ㄹㄴㅇ</td>
+											<% articles.forEach(function(article){ %>
+											<td class="text-center"><%=article.id%></td>
+											<td class="text-center"><%=article.time%></a></td>
+											<td class="text-left"><%=article.title%></td>
+											<td class="text-center"><%=article.name%></td>
 										</tr>
 										<tr style="padding: 50px;">
-											<td class="text-left" colspan="4" style="padding: 50px;">여기에 글쓸꺼임</td>
+											<td class="text-left" colspan="4" style="padding: 50px;">
+												<%-article.content.replace(/\n/g, '<br/>')%>
+											</td>
 										</tr>
-										<!-- 여기까지 ejs 묵어야함 -->
+										<% }); %>
 									</tbody>
 								</table>
 							</div>
 						</div>
+					</div>
+					<div align="right">
+						<% if(user.grade == 'A') { %>
+						<a href="/notice/write"><button class="btn btn-primary">글쓰기</button></a>
+						<% } %>
 					</div>
 				</div>
 			</div>
