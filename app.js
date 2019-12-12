@@ -90,6 +90,132 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.get('/signup', (req, res) => {
+    let get_id = `
+        select id
+        from user
+    `;
+    let ids = new Array();
+    pool.getConnection((err, connection) => {
+        connection.query(get_id, (err, results, fields) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            for (var i = 0; i < results.length; i++)
+                ids.push(results[i].id);
+            if (sign_up_err == 1)
+                msg = "정보가 없습니다";
+            else
+                msg = "정확하게 입력해주세요";
+            sign_up_err = 0;
+            connection.release();
+            res.render('user/signup', {ids : ids, msg:msg});    
+        }); 
+    });
+});
+
+app.post('/signup', (req, res) => {
+    let id = req.body.id;
+    let name = req.body.name;
+    let password = req.body.pass;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+    let tel1 = req.body.tel1;
+    let tel2 = req.body.tel2;
+    let tel3 = req.body.tel3;
+    let addr1 = req.body.addr1;
+    let addr2 = req.body.addr2;
+    let addr3 = req.body.addr3;
+    let cln1 = req.body.cln1;
+    let cln2 = req.body.cln2;
+
+    let values = [id, password, "P", name, emailid, emaildomain, tel1, tel2, tel3, addr1, addr2, addr3];
+    let values_relation = [cln1, cln2];
+    let user_insert = `
+    insert into user (id, password, grade, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address)
+    values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    let select_student = `
+    select * from student 
+    where class = ? and
+    name = ?
+    `;
+    let relation_insert = `
+    insert into relation (student_id, parents_id)
+    values(?, ?)
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(user_insert, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.query(select_student, values_relation, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                if (result.length > 0) {
+                    let kim = [result[0].id, id];
+                    connection.query(relation_insert, kim, (err, result)=>{
+                        connection.release();
+                        res.redirect('/login');
+                    });
+                }else{
+                    sign_up_err=1;
+                    connection.release();
+                    res.redirect('/signup');
+                }
+            });
+        });
+    });
+});
+
+app.get('/pw', (req, res) => {
+    res.render('user/pw', { msg: "정확하게 입력하세요" });
+});
+
+app.post('/pw', (req, res) => {
+    const sess = req.session;
+
+    let name = req.body.name;
+    let emailid = req.body.emailid;
+    let emaildomain = req.body.emaildomain;
+
+    let values = [name, emailid, emaildomain];
+    let find_idpw_query = `
+    select *
+    from user
+    where name=? and emailid=? and emaildomain=?;
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(find_idpw_query, values, (err, results) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+
+            if (results.length == 1) {
+                sess.userid = results[0].id;
+                sess.name = results[0].name;
+                sess.grade = results[0].grade;
+                req.session.save(() => {
+                    connection.release();
+                    res.redirect('/mypage');
+                });
+            } else {
+                connection.release();
+                res.render('user/pw', { msg: "등록된 계정이 없습니다." });
+            }
+        });
+    });
+});
 
 app.get('/mypage', (req, res) =>{
     let userid = req.session.userid;
@@ -460,132 +586,6 @@ app.get('/admin/student_delete/:num', (req, res) => {
                     connection.release();
                     res.redirect('/admin');
                 });
-            }
-        });
-    });
-});
-
-app.get('/signup', (req, res) => {
-    let get_id = `
-        select id
-        from user
-    `;
-    let ids = new Array();
-    pool.getConnection((err, connection) => {
-        connection.query(get_id, (err, results, fields) => {
-            if (err) {
-                console.log(err);
-                connection.release();
-                res.status(500).send('Internal Server Error!!!')
-            }
-
-            for (var i = 0; i < results.length; i++)
-                ids.push(results[i].id);
-            if (sign_up_err == 1)
-                msg = "정보가 없습니다";
-            else
-                msg = "정확하게 입력해주세요";
-            sign_up_err = 0;
-            connection.release();
-            res.render('user/signup', {ids : ids, msg:msg});    
-        }); 
-    });
-});
-
-app.post('/signup', (req, res) => {
-    let id = req.body.id;
-    let name = req.body.name;
-    let password = req.body.pass;
-    let emailid = req.body.emailid;
-    let emaildomain = req.body.emaildomain;
-    let tel1 = req.body.tel1;
-    let tel2 = req.body.tel2;
-    let tel3 = req.body.tel3;
-    let addr1 = req.body.addr1;
-    let addr2 = req.body.addr2;
-    let addr3 = req.body.addr3;
-    let cln1 = req.body.cln1;
-    let cln2 = req.body.cln2;
-
-    let values = [id, password, "P", name, emailid, emaildomain, tel1, tel2, tel3, addr1, addr2, addr3];
-    let values_relation = [cln1, cln2];
-    let user_insert = `
-    insert into user (id, password, grade, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address)
-    values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    let select_student = `
-    select * from student 
-    where class = ? and
-    name = ?
-    `;
-    let relation_insert = `
-    insert into relation (student_id, parents_id)
-    values(?, ?)
-    `;
-    pool.getConnection((err, connection) => {
-        connection.query(user_insert, values, (err, result) => {
-            if (err) {
-                console.log(err);
-                connection.release();
-                res.status(500).send('Internal Server Error!!!')
-            }
-            connection.query(select_student, values_relation, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    connection.release();
-                    res.status(500).send('Internal Server Error!!!')
-                }
-                if (result.length > 0) {
-                    let kim = [result[0].id, id];
-                    connection.query(relation_insert, kim, (err, result)=>{
-                        connection.release();
-                        res.redirect('/login');
-                    });
-                }else{
-                    sign_up_err=1;
-                    connection.release();
-                    res.redirect('/signup');
-                }
-            });
-        });
-    });
-});
-
-app.get('/pw', (req, res) => {
-    res.render('user/pw', { msg: "정확하게 입력하세요" });
-});
-app.post('/pw', (req, res) => {
-    const sess = req.session;
-
-    let name = req.body.name;
-    let emailid = req.body.emailid;
-    let emaildomain = req.body.emaildomain;
-
-    let values = [name, emailid, emaildomain];
-    let find_idpw_query = `
-    select *
-    from user
-    where name=? and emailid=? and emaildomain=?;
-    `;
-    pool.getConnection((err, connection) => {
-        connection.query(find_idpw_query, values, (err, results) => {
-            if (err) {
-                console.log(err);
-                connection.release();
-                res.status(500).send('Internal Server Error!!!')
-            }
-
-            if (results.length == 1) {
-                sess.userid = results[0].id;
-                sess.name = results[0].name;
-                sess.grade = results[0].grade;
-                req.session.save(() => {
-                    connection.release();
-                    res.redirect('/mypage');
-                });
-            } else {
-                connection.release();
-                res.render('user/pw', { msg: "등록된 계정이 없습니다." });
             }
         });
     });
