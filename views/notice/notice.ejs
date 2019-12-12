@@ -41,8 +41,8 @@
 										</tr>
 									</thead>
 									<tbody>
+										<% articles.forEach(function(article){ %>
 										<tr>
-											<% articles.forEach(function(article){ %>
 											<td class="text-center"><%=article.id%></td>
 											<td class="text-center"><%=article.time%></a></td>
 											<td class="text-left"><%=article.title%></td>
@@ -53,6 +53,16 @@
 												<%-article.content.replace(/\n/g, '<br/>')%>
 											</td>
 										</tr>
+										<% if(user.userid == article.writer_id ) { %>
+										<tr>
+											<td class="text-right" colspan="4">
+												<button class="btn btn-dark"
+													onclick="location.href = '/notice/modify?num=<%=article.id%>';">수정</button>
+												<button class="btn btn-dark"
+													onclick="location.href = '/notice/delete?num=<%=article.id%>';">삭제</button>
+											</td>
+										</tr>
+										<% }%>
 										<% }); %>
 									</tbody>
 								</table>

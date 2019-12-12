@@ -379,7 +379,7 @@ app.get('/notice', (req, res) => {
     }
 
     let select_notice = `
-    select n.id as id, u.name as name, n.title as title, n.content as content, 
+    select n.id as id, u.id as writer_id, u.name as name, n.title as title, n.content as content, 
     case
     when date_format(n.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
     then date_format(n.time, '%H:%i:%s')
@@ -429,6 +429,77 @@ app.post('/notice/write', (req, res) => {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!');
+            }
+            connection.release();
+            res.redirect('/notice');
+        });
+    });
+});
+
+app.get('/notice/modify', (req, res) => {
+    let num = req.query.num;
+
+    let board_select = `
+        select * 
+        from notice
+        where id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(board_select, num, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            res.render('notice/modify', { article: result[0] });
+        });
+    });
+});
+
+app.get('/notice/modify_content', (req, res) => {
+    res.render('notice/modify_content');
+});
+
+app.post('/notice/modify', (req, res) => {
+    let id = req.body.id;
+    let title = req.body.title;
+    let content = req.body.content;
+    let classname = req.body.classname;
+
+    let values = [title, content, classname, id];
+    let notice_update = `
+    update notice
+    set title=?, content=?, class=?
+    where id=?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(notice_update, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.redirect('/notice');
+        });
+    });
+});
+
+app.get('/notice/delete', (req, res) => {
+    let num = req.query.num;
+
+    let notice_delete = `
+    delete from notice 
+    where id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(notice_delete, num, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
             res.redirect('/notice');
