@@ -695,8 +695,22 @@ app.post('/comment/add', (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/calendar', (req, res) => {
-    res.render('calendar/calendar');
+    let select_birth =`
+        select content, date_format(time, '%m') as month, date_format(time, '%d') as day 
+        from calendar
+    `
+    pool.getConnection((err, connection) =>{
+        connection.query(select_birth, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.render('calendar/calendar', {results : result});
+        });
+    });
 });
+
 
 app.get('/inout', (req, res) => {
     res.render('inout/inout');
