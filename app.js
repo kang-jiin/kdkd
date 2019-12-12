@@ -112,8 +112,8 @@ app.get('/signup', (req, res) => {
                 msg = "정확하게 입력해주세요";
             sign_up_err = 0;
             connection.release();
-            res.render('user/signup', {ids : ids, msg:msg});    
-        }); 
+            res.render('user/signup', { ids: ids, msg: msg });
+        });
     });
 });
 
@@ -162,12 +162,12 @@ app.post('/signup', (req, res) => {
                 }
                 if (result.length > 0) {
                     let kim = [result[0].id, id];
-                    connection.query(relation_insert, kim, (err, result)=>{
+                    connection.query(relation_insert, kim, (err, result) => {
                         connection.release();
                         res.redirect('/login');
                     });
-                }else{
-                    sign_up_err=1;
+                } else {
+                    sign_up_err = 1;
                     connection.release();
                     res.redirect('/signup');
                 }
@@ -217,42 +217,42 @@ app.post('/pw', (req, res) => {
     });
 });
 
-app.get('/mypage', (req, res) =>{
+app.get('/mypage', (req, res) => {
     let userid = req.session.userid;
     let user_data_query = `
         select *
         from user
         where id = ?
     `;
-    let student_data_query=`
+    let student_data_query = `
         select id, name, class, date_format(birth, '%Y-%m-%d') as birth
         from relation, student
         where relation.parents_id = ? and
         relation.student_id = student.id
     `
-    pool.getConnection((err, connection) =>{
-        connection.query(user_data_query, [userid], (err, userresults, fields) =>{
+    pool.getConnection((err, connection) => {
+        connection.query(user_data_query, [userid], (err, userresults, fields) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(student_data_query, [userid], (err, studentresults, fields)=>{
+            connection.query(student_data_query, [userid], (err, studentresults, fields) => {
                 if (err) {
                     console.log(err);
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
                 connection.release();
-                res.render('user/mypage', {article : userresults[0], student: studentresults});        
-            });            
+                res.render('user/mypage', { article: userresults[0], student: studentresults });
+            });
         });
     });
 });
 
-app.post('/mypage', (req, res) =>{
+app.post('/mypage', (req, res) => {
     const sess = req.session;
-    
+
     let id = sess.userid;
     let name = req.body.name;
     let password = req.body.pass;
@@ -264,7 +264,7 @@ app.post('/mypage', (req, res) =>{
     let zip_code = req.body.addr1;
     let address = req.body.addr2;
     let detail_address = req.body.addr3;
-    
+
     let values = [password, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address, id];
     let users_update = `
     update user set
@@ -289,7 +289,7 @@ app.post('/mypage', (req, res) =>{
     });
 });
 
-app.get('/user_student_add',(req, res)=>{
+app.get('/user_student_add', (req, res) => {
     let get_id = `
         select id
         from user
@@ -311,8 +311,8 @@ app.get('/user_student_add',(req, res)=>{
                 msg = "정확하게 입력해주세요";
             sign_up_err = 0;
             connection.release();
-            res.render('user/user_student_add', {ids : ids, msg:msg});    
-        }); 
+            res.render('user/user_student_add', { ids: ids, msg: msg });
+        });
     });
 });
 
@@ -346,8 +346,8 @@ app.post('/user_student_add', (req, res) => {
                     connection.release();
                     res.redirect('/home');
                 });
-            } else{
-                sign_up_err=1;
+            } else {
+                sign_up_err = 1;
                 connection.release();
                 res.redirect('/user_student_add');
             }
@@ -369,6 +369,10 @@ app.get('/notice', (req, res) => {
     res.render('notice/notice');
 });
 
+//////////////////////////////////////////////////////////////
+//                      게시판                              //
+//////////////////////////////////////////////////////////////
+
 app.get('/board', (req, res) => {
     let select_board = `
     select b.id as id, u.name as name, b.title as title, b.content as content, 
@@ -380,29 +384,72 @@ app.get('/board', (req, res) => {
     from board b, user u
     where b.writer_id = u.id
     `;
-    pool.getConnection((err, connection) =>{
-        connection.query(select_board, (err, results, fields) =>{
+    pool.getConnection((err, connection) => {
+        connection.query(select_board, (err, results, fields) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
-            res.render('board/board', {articles : results}); 
+            res.render('board/board', { articles: results });
         });
     });
 });
 
 app.get('/board/view', (req, res) => {
-    res.render('home');
+    let num = req.query.num;
+
+    let hit_update = `
+        update board
+        set hit= hit+1
+        where id=?
+    `;
+    let select_board = `
+    select b.id as id, u.name as name, b.title as title, b.content as content, 
+    date_format(b.time, '%Y-%m-%d') as time, b.hit as hit
+    from board b, user u
+    where b.writer_id = u.id
+    and b.id = ?
+    `;
+    let select_comments = `
+    select * from comments 
+    where board_id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(hit_update, [num], (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.query(select_board, num, (err, results) => {
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.query(select_comments, num, (err, comment_lists) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    connection.release();
+                    res.render('board/view', { article: results[0], comment_lists: comment_lists });
+                });
+            });
+        });
+    });
 });
 
 app.get('/board/write', (req, res) => {
     res.render('board/write');
 });
 
-app.get('/board/content', (req, res) => {
-    res.render('board/content');
+app.get('/board/write_content', (req, res) => {
+    res.render('board/write_content');
 });
 
 app.post('/board/write', (req, res) => {
@@ -428,6 +475,125 @@ app.post('/board/write', (req, res) => {
         });
     });
 });
+
+app.get('/board/modify', (req, res) => {
+    let num = req.query.num;
+
+    let board_select = `
+        select * 
+        from board
+        where id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(board_select, num, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            res.render('board/modify', { article: result[0] });
+        });
+    });
+});
+
+app.get('/board/modify_content', (req, res) => {
+    res.render('board/modify_content');
+});
+
+app.post('/board/modify', (req, res) => {
+    let id = req.body.id;
+    let title = req.body.title;
+    let content = req.body.content;
+
+    let values = [title, content, id];
+    let board_update = `
+    update board
+    set title=?, content=?
+    where id=?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(board_update, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.redirect('/board/view?num=' + id);
+        });
+    });
+});
+
+app.get('/board/delete', (req, res) => {
+    var num = req.query.num;
+    let board_check = `
+        select *
+        from board
+        where id = ?
+    `;
+    let comments_check = `
+        select * from comments
+        where board_id = ?
+    `;
+    let comments_delete = `
+        delete from comments
+        where board_id = ?
+    `;
+    let board_delete = `
+        delete from board
+        where id = ?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(board_check, [num], (err, check_result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            if (check_result.length > 0) {
+                connection.query(comments_check, [num], (err, file_data) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error');
+                    }
+                    connection.beginTransaction((err) => {
+                        if (err) {
+                            throw err;
+                        }
+                        connection.query(comments_delete, [num], (err, results, fields) => {
+                            if (err) {
+                                console.log(err);
+                                res.status(500).send('Internal Server Error!!!');
+                            }
+                            connection.query(board_delete, [num], (err, results, fields) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(500).send('Internal Server Error!!!');
+                                }
+                                connection.commit((err) => {
+                                    if (err) {
+                                        connection.rollback(() => {
+                                            console.log(err);
+                                            throw err;
+                                        });
+                                    }
+                                    res.redirect('/board');
+                                });
+                            });
+                        });
+                    });
+                });
+            } else {
+                connection.release();
+                res.redirect('/board');
+            }
+        });
+    });
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/calendar', (req, res) => {
     res.render('calendar/calendar');
@@ -484,7 +650,6 @@ app.get('/admin/student_add', (req, res) => {
 });
 
 app.post('/admin/student_add', (req, res) => {
-    console.log(req.body);
     let classname = req.body.classname;
     let name = req.body.name;
     let birth = req.body.birth;

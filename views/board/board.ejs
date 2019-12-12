@@ -30,7 +30,7 @@
 									</thead>
 									<tbody>
 										<% articles.forEach(function(article){ %>
-										<tr onclick="location.href = '/board/<%=article.id%>';">
+										<tr onclick="location.href = '/board/view?num=<%=article.id%>';">
 											<td class="text-center"><%=article.id%></td>
 											<td class="text-left"><%=article.title%></a></td>
 											<td class="text-center"><%=article.name%></td>

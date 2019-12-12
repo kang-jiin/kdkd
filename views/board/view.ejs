@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <%- include('../includes/navbar.ejs') %>
+        <%- include('../includes/sidebar.ejs') %>
+        <!-- MAIN -->
+        <div class="main">
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <div class="container-fluid">
+                    <h2 class="display-4">글 보기</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <colgroup>
+                                <col width="100">
+                                <col width="*">
+                                <col width="100">
+                                <col width="*">
+                                <col width="100">
+                                <col width="*">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>제목</td>
+                                    <td colspan="5"><strong>
+                                        <%=article.id%>.
+                                        <%=article.title%></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>작성자</td>
+                                    <td>
+                                        <%=article.name%>
+                                    </td>
+                                    <td>조회수</td>
+                                    <td>
+                                        <%=article.hit%>
+                                    </td>
+                                    <td>작성일</td>
+                                    <td>
+                                        <%=article.time%>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <br />
+                                        <%-article.content.replace(/\n/g, '<br/>')%>
+                                        <br />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-dark" onclick="location.href = '/board';">목록</button>
+                        <button class="btn btn-dark"
+                            onclick="location.href = '/board/modify?num=<%=article.id%>';">수정</button>
+                        <button class="btn btn-dark"
+                            onclick="location.href='/board/delete?num=<%=article.id%>';">삭제</button>
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT -->
+        </div>
+        <!-- END MAIN -->
+    </div>
+    <!-- END WRAPPER -->
+    <!-- Javascript -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/vendor/chartist/js/chartist.min.js"></script>
+    <script src="/scripts/klorofil-common.js"></script>
+
+</body>
+
+</html>
