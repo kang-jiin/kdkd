@@ -401,20 +401,27 @@ app.get('/board/view', (req, res) => {
     let num = req.query.num;
 
     let hit_update = `
-        update board
-        set hit= hit+1
-        where id=?
+    update board
+    set hit= hit+1
+    where id=?
     `;
     let select_board = `
-    select b.id as id, u.name as name, b.title as title, b.content as content, 
+    select b.id as id, u.id as writer_id, u.name as name, b.title as title, b.content as content, 
     date_format(b.time, '%Y-%m-%d') as time, b.hit as hit
     from board b, user u
     where b.writer_id = u.id
     and b.id = ?
     `;
     let select_comments = `
-    select * from comments 
-    where board_id = ?
+    select c.id as id, u.name as writer, c.content as content, 
+    case
+    when date_format(c.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    then date_format(c.time, '%H:%i:%s')
+    else date_format(c.time, '%Y-%m-%d')
+    end as time
+    from comments c, user u
+    where c.writer_id = u.id
+    and board_id = ?
     `;
 
     pool.getConnection((err, connection) => {
@@ -589,6 +596,30 @@ app.get('/board/delete', (req, res) => {
                 connection.release();
                 res.redirect('/board');
             }
+        });
+    });
+});
+
+app.post('/comment/add', (req, res) => {
+    const sess = req.session;
+    let num = req.query.num;
+    let comment = req.body.comment;
+
+    let values = [num, sess.userid, comment];
+    let comments_insert = `
+        insert into comments
+        (board_id, writer_id, content, time)
+        values (?, ?, ?, now())
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(comments_insert, values, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }            
+            res.redirect('/board/view?num=' + num);
+            connection.release();
         });
     });
 });
