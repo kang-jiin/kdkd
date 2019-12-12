@@ -137,41 +137,29 @@
 									
 									//데이터 등록
 									function setData(){
-										jsonData = 
-										{
-											"2019":{
-												"07":{
-													"17":"제헌절"
-												}
-												,"08":{
-													"7":"칠석"
-													,"15":"광복절"
-													,"23":"처서"
-												}
-												,"09":{
-													"13":"추석"
-													,"23":"추분"
-												}
-											}
-										}
+										jsonData = [
+											{"month":12, "day":25, "text":"크리스마스"},
+											{"month":12, "day":25, "text":"진구 1000일"},
+											<% results.forEach(function(result){ %>
+												{"month":<%=result.month%>, "day":<%=result.day%>, "text":"<%=result.content%>"},
+											<% }); %>	
+											{"month":7, "day":17, "text":"제헌절"}
+										]
 									}
 									
 									//스케줄 그리기
 									function drawSche(){
 										setData();
-										var dateMatch = null;
-										for(var i=firstDay.getDay();i<firstDay.getDay()+lastDay.getDate();i++){
-											var txt = "";
-											txt =jsonData[year];
-											if(txt){
-												txt = jsonData[year][month];
-												if(txt){
-													txt = jsonData[year][month][i];
-													dateMatch = firstDay.getDay() + i -1; 
-													$tdSche.eq(dateMatch).text(txt);
-												}
+										var dateMatch = new Array();
+										var txt = new Array();
+										for(var i=0; i < jsonData.length; i++){
+											if(jsonData[i].month==month){
+												dateMatch.push(firstDay.getDay()+jsonData[i].day -1);
+												txt.push(jsonData[i].text);
 											}
 										}
+										for(var i=0; i<dateMatch.length; i++)
+											$tdSche.eq(dateMatch[i]).text(txt[i]);
 									}
 								 
 								</script>
