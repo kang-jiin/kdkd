@@ -28,11 +28,13 @@
 										</tr>
 									</thead>
 									<tbody>
+										<% ins.forEach(function(insn){ %>
 										<tr>
-											<td class="text-left"></td>
-											<td class="text-center"></td>
-											<td class="text-center"></td>
+											<td class="text-left"><%=insn.no%></td>
+											<td class="text-center"><%=insn.time%></td>
+											<td class="text-center"><%=insn.name%></td>
 										</tr>
+										<% }); %>
 									</tbody>
 								</table>
 							</div>
@@ -52,11 +54,13 @@
 										</tr>
 									</thead>
 									<tbody>
+										<% outs.forEach(function(outsn){ %>
 										<tr>
-											<td class="text-left"></td>
-											<td class="text-center"></td>
-											<td class="text-center"></td>
+											<td class="text-left"><%=outsn.no%></td>
+											<td class="text-center"><%=outsn.time%></td>
+											<td class="text-center"><%=outsn.name%></td>
 										</tr>
+										<% }); %>
 									</tbody>
 								</table>
 							</div>

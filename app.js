@@ -784,7 +784,45 @@ app.get('/calendar', (req, res) => {
 
 
 app.get('/inout', (req, res) => {
-    res.render('inout/inout');
+    const sess = req.session;
+    let id = sess.userid;
+
+    let in_select = `
+        select date_format(in_out.time, '%Y-%m-%d %H:%i:%s') as time, student.name as name, in_out.id as no
+        from relation, student, in_out
+        where relation.student_id = student.id 
+        and student.id = in_out.student_id 
+        and in_out.in_out_flag = 'in' 
+        and relation.parents_id = ?
+    `;
+    let out_select = `
+        select date_format(in_out.time, '%Y-%m-%d %H:%i:%s') as time, student.name as name, in_out.id as no
+        from relation, student, in_out
+        where relation.student_id = student.id 
+        and student.id = in_out.student_id 
+        and in_out.in_out_flag = 'out' 
+        and relation.parents_id = ?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(in_select, id, (err, result1) =>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.query(out_select, id, (err, result2) =>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                console.log(result1);
+                console.log(result2);
+                res.render('inout/inout', { ins : result1, outs: result2});    
+            });    
+        });
+    });
+    
 });
 
 app.get('/admin', (req, res) => {
@@ -792,7 +830,7 @@ app.get('/admin', (req, res) => {
     let select_student = `
     select id, name, class, date_format(birth, '%Y-%m-%d') as birth, rfid_key
     from student 
-    where class = ?`
+    where class = ?`;
 
     pool.getConnection((err, connection) => {
         connection.query(select_student, class_values[0], (err, result1) => {
