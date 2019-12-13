@@ -23,6 +23,9 @@ app.use(session({
 app.use(function (req, res, next) {
     res.locals.user = req.session;
     res.locals.menu = req.url.split('/')[1];
+    if(!req.session.userid && res.locals.menu != 'login') {
+        return res.redirect('/login');
+    }
     next();
 });
 
@@ -836,6 +839,7 @@ app.get('/inout', (req, res) => {
         and student.id = in_out.student_id 
         and in_out.in_out_flag = 'in' 
         and relation.parents_id = ?
+        order by in_out.time desc
     `;
     let out_select = `
         select date_format(in_out.time, '%Y-%m-%d %H:%i:%s') as time, student.name as name, in_out.id as no
@@ -844,6 +848,7 @@ app.get('/inout', (req, res) => {
         and student.id = in_out.student_id 
         and in_out.in_out_flag = 'out' 
         and relation.parents_id = ?
+        order by in_out.time desc
     `;
     pool.getConnection((err, connection) => {
         connection.query(in_select, id, (err, result1) =>{
@@ -858,8 +863,6 @@ app.get('/inout', (req, res) => {
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
-                console.log(result1);
-                console.log(result2);
                 res.render('inout/inout', { ins : result1, outs: result2});    
             });    
         });
