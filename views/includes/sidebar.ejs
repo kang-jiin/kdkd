@@ -3,13 +3,13 @@
     <div class="sidebar-scroll">
         <nav>
             <ul class="nav">
-                <li><a href="/home" class="active"><i class="lnr lnr-home"></i> <span>HOME</span></a></li>
-                <li><a href="/notice" class=""><i class="lnr lnr-bullhorn"></i> <span>알림장</span></a></li>
-                <li><a href="/board" class=""><i class="lnr lnr-list"></i> <span>게시판</span></a></li>
-                <li><a href="/calendar" class=""><i class="lnr lnr-calendar-full"></i> <span>일정</span></a></li>
-                <li><a href="/inout" class=""><i class="lnr lnr-bus"></i> <span>등하원</span></a></li>
+                <li><a href="/home" <% if(menu == "home") { %> class="active" <% } %>><i class="lnr lnr-home"></i> <span>HOME</span></a></li>
+                <li><a href="/notice" <% if(menu == "notice") { %> class="active" <% } %>><i class="lnr lnr-bullhorn"></i> <span>알림장</span></a></li>
+                <li><a href="/board" <% if(menu == "board") { %> class="active" <% } %>><i class="lnr lnr-list"></i> <span>게시판</span></a></li>
+                <li><a href="/calendar" <% if(menu == "calendar") { %> class="active" <% } %>><i class="lnr lnr-calendar-full"></i> <span>일정</span></a></li>
+                <li><a href="/inout" <% if(menu == "inout") { %> class="active" <% } %>><i class="lnr lnr-bus"></i> <span>등하원</span></a></li>
                 <% if(user.grade == "A") { %>
-                <li><a href="/admin" class=""><i class="lnr lnr-cog"></i> <span>관리자 기능</span></a></li>
+                <li><a href="/admin" <% if(menu == "admin") { %> class="active" <% } %>><i class="lnr lnr-cog"></i> <span>관리자 기능</span></a></li>
                 <% } %>
             </ul>
         </nav>
