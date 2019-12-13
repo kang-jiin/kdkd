@@ -794,9 +794,12 @@ app.post('/comment/add', (req, res) => {
 
 app.get('/calendar', (req, res) => {
     let select_birth =`
-        select content, date_format(time, '%m') as month, date_format(time, '%d') as day 
-        from calendar
-    `
+    select content, date_format(time, '%m') as month, date_format(time, '%d') as day 
+    from calendar
+    union
+    select concat(name, " 생일") as content, date_format(birth, '%m') as month, date_format(birth, '%d') as day 
+    from student
+    `;
     pool.getConnection((err, connection) =>{
         connection.query(select_birth, (err, result)=>{
             if (err) {
