@@ -367,6 +367,10 @@ app.get('/logout', (req, res) => {
 //////////////////////////////////////////////////////////////
 
 app.get('/home', (req, res) => {
+    let select_environment = `
+    select * from environment
+    order by time desc
+    `;
     let select_board = `
     select b.id as id, u.name as name, b.title as title, b.content as content, 
     case
@@ -380,14 +384,21 @@ app.get('/home', (req, res) => {
     limit 0, 5
     `;
     pool.getConnection((err, connection) => {
-        connection.query(select_board, (err, board_results) => {
+        connection.query(select_environment, (err, environment_results) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.release();
-            res.render('home', { boards: board_results });
+            connection.query(select_board, (err, board_results) => {
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.release();
+                res.render('home', { environment: environment_results[0], boards: board_results });
+            });
         });
     });
 });
