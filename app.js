@@ -46,7 +46,7 @@ http.listen(8888, () => {
 app.get('/', (req, res) => {
     const sess = req.session;
     if (sess.userid) {
-        res.render('home');
+        res.redirect('/home');
     }
     else {
         res.render('user/login');
@@ -80,7 +80,7 @@ app.post('/login', (req, res) => {
                 sess.grade = results[0].grade;
                 req.session.save(() => {
                     connection.release();
-                    res.redirect('/');
+                    res.redirect('/home');
                 });
             } else {
                 connection.release();
@@ -361,8 +361,34 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
+//////////////////////////////////////////////////////////////
+//                      HOME                                //
+//////////////////////////////////////////////////////////////
+
 app.get('/home', (req, res) => {
-    res.render('home');
+    let select_board = `
+    select b.id as id, u.name as name, b.title as title, b.content as content, 
+    case
+    when date_format(b.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    then date_format(b.time, '%H:%i:%s')
+    else date_format(b.time, '%Y-%m-%d')
+    end as time, b.hit as hit
+    from board b, user u
+    where b.writer_id = u.id
+    order by b.time desc
+    limit 0, 5
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(select_board, (err, board_results) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.render('home', { boards: board_results });
+        });
+    });
 });
 
 //////////////////////////////////////////////////////////////
@@ -388,7 +414,7 @@ app.get('/notice', (req, res) => {
     from notice n, user u
     where n.writer_id = u.id
     and n.class = ?
-    order by time desc
+    order by n.time desc
     `;
     pool.getConnection((err, connection) => {
         connection.query(select_notice, [classname], (err, results) => {
@@ -522,6 +548,7 @@ app.get('/board', (req, res) => {
     end as time, b.hit as hit
     from board b, user u
     where b.writer_id = u.id
+    order by b.time desc
     `;
     pool.getConnection((err, connection) => {
         connection.query(select_board, (err, results, fields) => {
@@ -821,8 +848,7 @@ app.get('/inout', (req, res) => {
                 res.render('inout/inout', { ins : result1, outs: result2});    
             });    
         });
-    });
-    
+    }); 
 });
 
 app.get('/admin', (req, res) => {
