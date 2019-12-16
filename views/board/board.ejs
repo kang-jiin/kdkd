@@ -2,7 +2,11 @@
 <html lang="en">
 
 <%- include('../includes/head.ejs') %>
-
+<script>
+	function next_page(num) {
+		location.href = '/board?page='+num;
+	}
+</script>
 <body>
 	<!-- WRAPPER -->
 	<div id="wrapper">
@@ -14,8 +18,9 @@
 			<div class="main-content">
 				<div class="container-fluid">
 					<h3 class="page-title">자유 게시판</h3>
-					<a href="/board/write"><button class="btn btn-secondary" type="button">글쓰기</button></a>
-					<div class="panel panel-headline">
+					<div align="right"><a href="/board/write"><button class="btn btn-primary"
+								type="button">글쓰기</button></a></div>
+					<div class="panel panel-headline" style="margin-top: 1%;">
 						<div class="panel-body">
 							<div class="panel-body no-padding">
 								<table class="table table-hover">
@@ -42,13 +47,29 @@
 								</table>
 							</div>
 						</div>
+						<div class="text-center">
+							<ul class="pagination text-center">
+								<%var cont = Math.ceil(current/10);%>
+								<%if(cont>1){%>
+									<a class="nextgroup" href="javascript:next_page(<%=(cont-2)*10+1%>);">이전</a>
+								<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+										<a class="pagebtns" href="javascript:next_page(<%=i%>);"><%= i%></a>
+								<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+										<a class="pagebtns" href="javascript:next_page(<%=i%>);"><%= i%></a>
+									<%}%>
+								<a class="nextgroup" href="javascript:next_page(<%=cont*10+1%>);">다음</a>
+								<%}%>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
 			<!-- END MAIN CONTENT -->
 		</div>
 	</div>
-		<!-- END MAIN -->	
+	<!-- END MAIN -->
 	<!-- END WRAPPER -->
 	<!-- Javascript -->
 	<script src="/vendor/jquery/jquery.min.js"></script>
