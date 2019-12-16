@@ -582,6 +582,10 @@ app.get('/notice/delete', (req, res) => {
 //////////////////////////////////////////////////////////////
 
 app.get('/board', (req, res) => {
+    let page = req.query.page;
+    if(req.query.page != undefined) page = req.query.page;
+    else page= 1;
+    
     let select_board = `
     select b.id as id, u.name as name, b.title as title, b.content as content, 
     case
@@ -592,16 +596,29 @@ app.get('/board', (req, res) => {
     from board b, user u
     where b.writer_id = u.id
     order by b.time desc
+    LIMIT ?, ?
+    `;
+
+    let select_count =`
+    select count(*) as num
+    from board
     `;
     pool.getConnection((err, connection) => {
-        connection.query(select_board, (err, results, fields) => {
+        connection.query(select_board,[(page * 10) - 10, 9], (err, c_results, fields) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.release();
-            res.render('board/board', { articles: results });
+            connection.query(select_count, (err, countes, fields) =>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.release();
+                res.render('board/board', { articles: c_results, pages: Math.ceil(countes[0].num/10), current: page});    
+            })
         });
     });
 });
