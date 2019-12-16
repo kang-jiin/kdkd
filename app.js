@@ -371,8 +371,9 @@ app.get('/logout', (req, res) => {
 
 app.get('/home', (req, res) => {
     let select_environment = `
-    select * from environment
+    select date_format(time, '%H:%i') t, temperature, humidity, dust from environment
     order by time desc
+    limit 0,10
     `;
     let select_board = `
     select b.id as id, u.name as name, b.title as title, b.content as content, 
@@ -386,6 +387,7 @@ app.get('/home', (req, res) => {
     order by b.time desc
     limit 0, 5
     `;
+    
     pool.getConnection((err, connection) => {
         connection.query(select_environment, (err, environment_results) => {
             if (err) {
@@ -400,7 +402,8 @@ app.get('/home', (req, res) => {
                     res.status(500).send('Internal Server Error!!!')
                 }
                 connection.release();
-                res.render('home', { environment: environment_results[0], boards: board_results });
+                
+                res.render('home', { environments: environment_results, boards: board_results });
             });
         });
     });

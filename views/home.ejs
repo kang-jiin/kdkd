@@ -16,7 +16,7 @@
 					<!-- OVERVIEW -->
 					<div class="panel panel-headline">
 						<div class="panel-heading">
-							<h3 class="panel-title">온도, 습도, 미세먼지</h3>
+							<h3 class="panel-title">온도, 습도, 미세먼지 <%=environments[0].t%></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -24,7 +24,7 @@
 									<div class="metric">
 										<span class="icon"><i class="fas fa-thermometer-three-quarters"></i></span>
 										<p>
-											<span class="number"><%=environment.temperature%>˚C</span>
+											<span class="number"><%=environments[0].temperature%>˚C</span>
 											<span class="title">온도</span>
 										</p>
 									</div>
@@ -33,7 +33,7 @@
 									<div class="metric">
 										<span class="icon"><i class="fas fa-tint"></i></span>
 										<p>
-											<span class="number"><%=environment.humidity%>%</span>
+											<span class="number"><%=environments[0].humidity%>%</span>
 											<span class="title">습도</span>
 										</p>
 									</div>
@@ -42,7 +42,7 @@
 									<div class="metric">
 										<span class="icon"><i class="fab fa-soundcloud"></i></span>
 										<p>
-											<span class="number"><%=environment.dust%>㎍/m³</span>
+											<span class="number"><%=environments[0].dust%>㎍/m³</span>
 											<span class="title">미세먼지</span>
 										</p>
 									</div>
@@ -103,7 +103,7 @@
 									</div>
 								</div>
 								<div class="panel-body">
-									<div id="visits-trends-chart" class="ct-chart"></div>
+									<!-- <div id="temp-chart" class="ct-chart"></div> -->
 								</div>
 							</div>
 							<!-- END MULTI CHARTS -->
@@ -122,48 +122,7 @@
 									</div>
 								</div>
 								<div class="panel-body">
-									<ul class="list-unstyled task-list">
-										<li>
-											<p>Updating Users Settings <span class="label-percent">23%</span></p>
-											<div class="progress progress-xs">
-												<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="23" aria-valuemin="0" aria-valuemax="100" style="width:23%">
-													<span class="sr-only">23% Complete</span>
-												</div>
-											</div>
-										</li>
-										<li>
-											<p>Load &amp; Stress Test <span class="label-percent">80%</span></p>
-											<div class="progress progress-xs">
-												<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-													<span class="sr-only">80% Complete</span>
-												</div>
-											</div>
-										</li>
-										<li>
-											<p>Data Duplication Check <span class="label-percent">100%</span></p>
-											<div class="progress progress-xs">
-												<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-													<span class="sr-only">Success</span>
-												</div>
-											</div>
-										</li>
-										<li>
-											<p>Server Check <span class="label-percent">45%</span></p>
-											<div class="progress progress-xs">
-												<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-													<span class="sr-only">45% Complete</span>
-												</div>
-											</div>
-										</li>
-										<li>
-											<p>Mobile App Development <span class="label-percent">10%</span></p>
-											<div class="progress progress-xs">
-												<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
-													<span class="sr-only">10% Complete</span>
-												</div>
-											</div>
-										</li>
-									</ul>
+									<div id="temp-chart" class="ct-chart"></div>
 								</div>
 							</div>
 							<!-- END TASKS -->
@@ -179,7 +138,7 @@
 									</div>
 								</div>
 								<div class="panel-body">
-									<div id="visits-chart" class="ct-chart"></div>
+									<div id="humid-chart" class="ct-chart"></div>
 								</div>
 							</div>
 							<!-- END VISIT CHART -->
@@ -195,17 +154,7 @@
 									</div>
 								</div>
 								<div class="panel-body">
-									<div id="system-load" class="easy-pie-chart" data-percent="70">
-										<span class="percent">70</span>
-									</div>
-									<h4>CPU Load</h4>
-									<ul class="list-unstyled list-justify">
-										<li>High: <span>95%</span></li>
-										<li>Average: <span>87%</span></li>
-										<li>Low: <span>20%</span></li>
-										<li>Threads: <span>996</span></li>
-										<li>Processes: <span>259</span></li>
-									</ul>
+									<div id="dust-chart" class="ct-chart"></div>
 								</div>
 							</div>
 							<!-- END REALTIME CHART -->
@@ -234,49 +183,150 @@
 	<script src="/scripts/klorofil-common.js"></script>
 	<script>
 	$(function() {
-		var data, options;
+		let data, options;
 
-		// headline charts
 		data = {
-			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-			series: [
-				[23, 29, 24, 40, 25, 24, 35],
-				[14, 25, 18, 34, 29, 38, 44],
-			]
-		};
-
-		options = {
-			height: 300,
-			showArea: true,
-			showLine: false,
-			showPoint: false,
-			fullWidth: true,
-			axisX: {
-				showGrid: false
-			},
-			lineSmooth: false,
-		};
-
-		new Chartist.Line('#headline-chart', data, options);
-
-
-		// visits trend charts
-		data = {
-			labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
 			series: [{
 				name: 'series-real',
-				data: [200, 380, 350, 320, 410, 450, 570, 400, 555, 620, 750, 900],
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].temperature%> ,
+				<% } %>
+				<%=environments[0].temperature%>
+			],
 			}, {
 				name: 'series-projection',
-				data: [240, 350, 360, 380, 400, 450, 480, 523, 555, 600, 700, 800],
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].temperature%> ,
+				<% } %>
+				<%=environments[0].temperature%>
+			],
 			}]
 		};
 
 		options = {
 			fullWidth: true,
-			lineSmooth: false,
+			lineSmooth: true,
 			height: "270px",
-			low: 0,
+			low: 'auto',
+			high: 'auto',
+			series: {
+				'series-projection': {
+					showArea: true,
+					showPoint: false,
+					showLine: false
+				},
+			},
+			axisX: {
+				showGrid: true,
+
+			},
+			axisY: {
+				showGrid: false,
+				onlyInteger: true,
+				offset: 0,
+			},
+			chartPadding: {
+				left: 20,
+				right: 20
+			}
+		};
+
+		new Chartist.Line('#temp-chart', data, options);
+
+		data = {
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
+			series: [{
+				name: 'series-real',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].humidity%> ,
+				<% } %>
+				<%=environments[0].humidity%>
+			],
+			}, {
+				name: 'series-projection',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].humidity%> ,
+				<% } %>
+				<%=environments[0].humidity%>
+			],
+			}]
+		};
+
+		options = {
+			fullWidth: true,
+			lineSmooth: true,
+			height: "270px",
+			low: 'auto',
+			high: 'auto',
+			series: {
+				'series-projection': {
+					showArea: true,
+					showPoint: false,
+					showLine: false
+				},
+			},
+			axisX: {
+				showGrid: false,
+			},
+			axisY: {
+				showGrid: false,
+				onlyInteger: true,
+				offset: 0,
+			},
+			chartPadding: {
+				left: 20,
+				right: 20
+			}
+		};
+
+		new Chartist.Line('#humid-chart', data, options);
+
+		data = {
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
+			series: [{
+				name: 'series-real',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].dust%> ,
+				<% } %>
+				<%=environments[0].dust%>
+			],
+			}, {
+				name: 'series-projection',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].dust%> ,
+				<% } %>
+				<%=environments[0].dust%>
+			],
+			}]
+		};
+
+		options = {
+			fullWidth: true,
+			lineSmooth: true,
+			height: "270px",
+			low: 'auto',
 			high: 'auto',
 			series: {
 				'series-projection': {
@@ -300,25 +350,8 @@
 			}
 		};
 
-		new Chartist.Line('#visits-trends-chart', data, options);
+		new Chartist.Line('#dust-chart', data, options);
 
-
-		// visits chart
-		data = {
-			labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-			series: [
-				[6384, 6342, 5437, 2764, 3958, 5068, 7654]
-			]
-		};
-
-		options = {
-			height: 300,
-			axisX: {
-				showGrid: false
-			},
-		};
-
-		new Chartist.Bar('#visits-chart', data, options);
 
 
 		// real-time pie chart
