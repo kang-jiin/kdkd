@@ -353,7 +353,7 @@ router.post('/user_student_add', (req, res) => {
 router.get('/logout', (req, res) => {
     const sess = req.session;
     sess.destroy();
-    res.redirect('/login');
+    res.redirect('/user/login');
 });
 
 module.exports = router;
