@@ -424,6 +424,11 @@ ul.notifications > li {
         .sidebar .nav .nav > li > a.active a {
           color: #fff; }
 
+/* 여기 알림장 selectbox */
+.select-script{position:relative; width:160px; height:40px; line-height:40px; border:1px solid #606976; border-radius:4px; text-transform:uppercase; background:#fff;}
+	.select-script label{position:absolute; width:120%; font-size:.86em; color:#606976; top:0; left:0; padding:0 5%;}
+	.select-script label:after{content:'▼'; width:40px; height:40px; position:absolute; top:0; right:0; font-size:.76em; color:#fff; text-align:center; background:#606976;}
+	.select-script select{width:100%; height:40px; opacity:0; filter:alpha(opacity=0); -ms-filter:alpha(opacity=0)/* IE 8 */;}
 /********************
  * TYPOGRAPHY
  ********************/
