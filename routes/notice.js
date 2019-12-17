@@ -77,7 +77,7 @@ router.post('/write', (req, res) => {
                 res.status(500).send('Internal Server Error!!!');
             }
             connection.release();
-            res.redirect('/notice');
+            res.redirect('/notice?class='+classname);
         });
     });
 });
