@@ -159,12 +159,12 @@ router.post('/signup', (req, res) => {
                     let kim = [result[0].id, id];
                     connection.query(relation_insert, kim, (err, result) => {
                         connection.release();
-                        res.redirect('/login');
+                        res.redirect('/user/login');
                     });
                 } else {
                     sign_up_err = 1;
                     connection.release();
-                    res.redirect('/signup');
+                    res.redirect('/user/signup');
                 }
             });
         });
@@ -202,7 +202,7 @@ router.post('/pw', (req, res) => {
                 sess.grade = results[0].grade;
                 req.session.save(() => {
                     connection.release();
-                    res.redirect('/mypage');
+                    res.redirect('/user/mypage');
                 });
             } else {
                 connection.release();
