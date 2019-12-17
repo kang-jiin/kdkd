@@ -14,7 +14,7 @@
                     <h2>회원 찾기</h2>
 
                     <p><%=msg%></p>
-                    <form method="post" action="/pw">
+                    <form method="post" action="/user/pw">
                         <div class="form-group">
                             <label for="name">이름:</label>
                             <input type="text" class="form-control" id="name" name="name">
@@ -35,7 +35,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary">찾기</button>
                         <button type="button" class="btn btn-outline-dark"
-                            onclick="location.href = '/login';">취소</button>
+                            onclick="location.href = '/user/login';">취소</button>
                     </form>
                 </div>
             </div>

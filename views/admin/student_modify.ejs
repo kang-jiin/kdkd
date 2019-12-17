@@ -15,7 +15,7 @@
         <div class="container-fluid">
           <h3 class="page-title">학생 정보 수정</h3>
           <div id="toastr-demo" class="panel" style="margin-left: 20%; margin-right: 20%;">
-            <form id="studentaddform" method="post" action="/admin/student_modify/<%=student.id%>">
+            <form id="studentaddform" method="post" action="/admin/student_modify?num=<%=student.id%>">
               <div class="panel-body">
                 <div align="left" class="form-group custom-control-inline">
                   <label for="cln">학생반</label>
@@ -46,7 +46,7 @@
                 <div class="form-group" align="center">
                   <button type="submit" class="btn btn-primary" id="registerBtn">저장</button>
                   <button type="button" class="btn btn-dark"
-                    onclick="location.href='/admin/student_delete/<%=student.id%>';">삭제</button>
+                    onclick="location.href='/admin/student_delete?num=<%=student.id%>';">삭제</button>
                 </div>
               </div>
             </form>

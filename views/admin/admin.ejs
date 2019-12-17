@@ -34,7 +34,7 @@
 										</thead>
 										<tbody>
 											<% student1.forEach(function(student){ %>
-											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -67,7 +67,7 @@
 										</thead>
 										<tbody>
 											<% student2.forEach(function(student){ %>
-											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -100,7 +100,7 @@
 										</thead>
 										<tbody>
 											<% student3.forEach(function(student){ %>
-											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
@@ -133,7 +133,7 @@
 										</thead>
 										<tbody>
 											<% student4.forEach(function(student){ %>
-											<tr onclick="location.href = '/admin/student_modify/<%=student.id%>';">
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
 												<td><%=student.id%></td>
 												<td><%=student.name%></a></td>
 												<td><%=student.birth%></td>
