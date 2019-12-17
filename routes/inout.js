@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
     let grade = sess.grade;
 
     let inout_select;
-    if(grade == 'G') {  //일반 계정
+    if(grade == 'P') {  //일반 계정
         inout_select = `
             select date_format(in_out.time, '%Y-%m-%d %H:%i:%s') as time, student.name as name, in_out.id as no
             from relation, student, in_out
