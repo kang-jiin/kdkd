@@ -14,6 +14,10 @@
 			<div class="main-content">
 				<div class="container-fluid">
 					<h3 class="page-title">등하원 관리</h3>
+					<div style="margin-bottom: 1%;">
+						<input id="birth" name="birth" type="month" value='<%=searchdate%>'
+						onchange="if(this.value) location.href='/inout?searchdate='+this.value;">
+					</div>
 					<div class="panel panel-headline col-sm-5"
 						style="overflow:auto; height:600px; padding:10px; margin-left: 60px;">
 						<h3 class="page-title">등원 관리</h3>
