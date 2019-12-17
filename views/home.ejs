@@ -103,18 +103,15 @@
 									</div>
 								</div>
 								<div class="panel-body" align="center">
-									<img src="" id="camimg" >
+									<img id="play">
 									<script>
-										// get img dom element
-										const img = document.querySelector('#camimg');
-
-										const WS_URL = location.origin.replace(/^http/, 'ws');
-										const ws = new WebSocket(WS_URL);
-										ws.onopen = () => console.log(`Connected to ${WS_URL}`);
-										ws.onmessage = message => {
-											// set the base64 string to the src tag of the image
-											img.src = message.data;
-										}
+										var socket = io();
+										socket.on('stream', function (image) {
+											var img = document.getElementById("play");
+											img.src = image;
+											var log = document.getElementById("logger");
+											$("#logger").text(image);
+										});
 									</script>
 								</div>
 							</div>
