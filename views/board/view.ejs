@@ -82,7 +82,6 @@
                                             <button id="comment" style="margin-left: 15px;" class="btn btn-secondary"
                                                 type="submit">등록</button>
                                             <% } else { %>
-
                                             <button id="comment" style="margin-left: 15px;" class="btn btn-secondary"
                                                 type="submit" disabled="disabled">등록</button>
                                             <% } %>
@@ -97,25 +96,32 @@
                                         <col width="*">
                                         <col width="10%">
                                         <col width="20%">
+                                        <col width="10%">
                                     </colgroup>
                                     <thead class="thead-dark">
                                         <tr>
                                             <th class="text-center">내용</th>
                                             <th class="text-center">작성자</th>
                                             <th class="text-center">작성 시간</th>
+                                            <th class="text-center"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% if(comment_lists.length == 0){ %>
                                         <tr>
-                                            <td class="text-center" colspan="3">작성된 댓글이 없습니다.</td>
+                                            <td class="text-center" colspan="4">작성된 댓글이 없습니다.</td>
                                         </tr>
                                         <% } else { %>
                                         <% comment_lists.forEach(function(comment){ %>
                                         <tr>
                                             <td class="text-left"><%=comment.content%></td>
-                                            <td class="text-center"><%=comment.writer%></td>
+                                            <td class="text-center"><%=comment.writername%></td>
                                             <td class="text-center"><%=comment.time%></td>
+                                            <% if(comment.writerid == user.userid) { %>
+                                            <td class="text-center">
+                                                <button class="btn btn-secondary" onclick="location.href='/board/comment/delete?bnum=<%=article.id%>&cnum=<%=comment.id%>';">삭제</button>
+                                            </td>
+                                            <% } %>
                                         </tr>
                                         <% }); %>
                                         <% } %>

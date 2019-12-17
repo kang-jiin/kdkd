@@ -73,7 +73,7 @@ router.get('/view', (req, res) => {
     and b.id = ?
     `;
     let select_comments = `
-    select c.id as id, u.name as writer, c.content as content, 
+    select c.id as id, u.name as writername, u.id as writerid, c.content as content, 
     case
     when date_format(c.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
     then date_format(c.time, '%H:%i:%s')
@@ -280,6 +280,27 @@ router.post('/comment/add', (req, res) => {
             }            
             res.redirect('/board/view?num=' + num);
             connection.release();
+        });
+    });
+});
+
+router.get('/comment/delete', (req, res) => {
+    let cnum = req.query.cnum;
+    let bnum = req.query.bnum
+
+    let comment_delete = `
+        delete from comments
+        where id = ?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(comment_delete, cnum, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.release();
+            res.redirect('/board/view?num=' + bnum);
         });
     });
 });
