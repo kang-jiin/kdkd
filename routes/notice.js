@@ -16,13 +16,13 @@ const pool = mysql.createPool({
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
+    let page = req.query.page;
+    if(req.query.page != undefined) page = req.query.page;
+    else page= 1;
+
     let classname;
-    if(req.query.class != undefined) {
-        classname = req.query.class;
-    }
-    else {
-        classname = "햇님반";
-    }
+    if(req.query.class != undefined) classname = req.query.class;
+    else classname = "햇님반";
 
     let select_notice = `
     select n.id as id, u.id as writer_id, u.name as name, n.title as title, n.content as content, 
@@ -34,17 +34,32 @@ router.get('/', (req, res) => {
     from notice n, user u
     where n.writer_id = u.id
     and n.class = ?
-    order by n.time desc
+    order by n.id desc
+    LIMIT ?, ?
     `;
+
+    let select_count =`
+    select count(*) as num
+    from notice
+    where class = ?
+    `;
+    
     pool.getConnection((err, connection) => {
-        connection.query(select_notice, [classname], (err, results) => {
+        connection.query(select_notice, [classname, (page * 5) - 5, 5], (err, results) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.release();
-            res.render('notice/notice', { classname: classname, articles: results });
+            connection.query(select_count, [classname], (err, countes) =>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                connection.release();
+                res.render('notice/notice', { classname: classname, articles: results, pages: Math.ceil(countes[0].num/5), current: page});    
+            })
         });
     });
 });
