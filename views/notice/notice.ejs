@@ -24,9 +24,9 @@
 			<!-- MAIN CONTENT -->
 			<div class="main-content">
 				<div class="container-fluid">
-					<h3 class="page-title">알림장</h3>
+					<h3 class="page-title">알림장 (<%=classname%>)</h3>
 					<div class="select-box select-script">
-						<label for="selectbox">선택해 주세요</label>
+						<label for="selectbox">반 선택해 주세요</label>
 						<select id="selectbox" name="classname" 
 						onchange="if(this.value) location.href='/notice?class='+this.value;" title="선택해 주세요">
 							<option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
