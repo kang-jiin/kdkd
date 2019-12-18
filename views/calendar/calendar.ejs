@@ -15,6 +15,11 @@
 			<div class="main-content">
 				<div class="container-fluid">
 					<h3 class="page-title">일정표</h3>
+					<div align="right" style="margin-bottom: 1%;">
+						<% if(user.grade == 'A') { %>
+						<a href="/calendar/add"><button class="btn btn-primary">일정 추가</button></a>
+						<% } %>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<!-- PANEL HEADLINE -->

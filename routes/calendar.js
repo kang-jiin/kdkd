@@ -35,4 +35,30 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/add', (req, res) => {
+    res.render('calendar/add');
+});
+
+router.post('/add', (req, res) => {
+    let caldate = req.body.caldate;
+    let content = req.body.content;
+
+    let values = [caldate, content];
+    let calendar_insert = `
+    insert into calendar (time, content)
+    values(?, ?)`;
+
+    pool.getConnection((err, connection) => {
+        connection.query(calendar_insert, values, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            res.redirect('/calendar');
+        });
+    });
+});
+
 module.exports = router;

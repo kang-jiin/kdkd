@@ -62,12 +62,15 @@ router.post('/login', (req, res) => {
                         res.status(500).send('Internal Server Error!!!')
                     }
                     var msg = "";
-                    inout_results.forEach(function(inout_result){
-                        msg += inout_result.name;
-                        if(inout_result.in_out_flag == "in") msg += " 등원";
-                        else if(inout_result.in_out_flag == "out") msg += " 하원";
+                    for(let i=0; i<inout_results.length; i++){ 
+                        msg += inout_results[i].name;
+                        if(inout_results[i].in_out_flag == "in") msg += " 등원";
+                        else if(inout_results[i].in_out_flag == "out") msg += " 하원";
                         else msg += " 미등원";
-                    });
+                        if(i != inout_results.length-1) {
+                            msg +=",  ";
+                        }
+                    }
                     sess.userid = login_results[0].id;
                     sess.name = login_results[0].name;
                     sess.grade = login_results[0].grade;
