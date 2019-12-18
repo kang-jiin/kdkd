@@ -6,7 +6,7 @@
 <body>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  
+
   <script>
     $(() => {
       let name = '<%= name %>';
@@ -26,26 +26,26 @@
       $('#send').submit(() => {
         socket.emit('chat message', classname, name, $('#m').val());
         $('#m').val('');
-        
+
         return false;
       });
 
       socket.on('chat message', (name, msg) => {
         $('#messages').append($('<li>').text(name + '  :  ' +
           msg));
-          $('#messages').scrollTop(99999999);
+        $('#messages').scrollTop(99999999);
       });
 
       socket.on('leaveRoom', (classname, name) => {
         $('#messages').append($('<li>').text(name + '    leaved ' +
           classname + ' :('));
-          $('#messages').scrollTop(99999999);
+        $('#messages').scrollTop(99999999);
       });
 
       socket.on('joinRoom', (classname, name) => {
         $('#messages').append($('<li>').text(name + '    joined ' +
           classname + ':)'));
-          $('#messages').scrollTop(99999999);
+        $('#messages').scrollTop(99999999);
       });
     });
   </script>
@@ -61,26 +61,29 @@
           <h3 class="page-title">채팅 (<%=classname%>)</h3>
           <div class="select-box select-script">
             <label for="selectbox">반선택</label>
-            <select id="selectbox" name="classname" 
-            onchange="if(this.value) location.href='/chat?class='+this.value;" title="선택해 주세요">
+            <select id="selectbox" name="classname" onchange="if(this.value) location.href='/chat?class='+this.value;"
+              title="선택해 주세요">
               <option value="전체" <% if(classname == "전체") { %> selected <% } %>>전체</option>
-							<option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
-							<option value="별님반" <% if(classname == "별님반") { %> selected <% } %>>별님반</option>
-							<option value="달님반" <% if(classname == "달님반") { %> selected <% } %>>달님반</option>
-							<option value="꽃님반" <% if(classname == "꽃님반") { %> selected <% } %>>꽃님반</option>
-						</select>
+              <option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
+              <option value="별님반" <% if(classname == "별님반") { %> selected <% } %>>별님반</option>
+              <option value="달님반" <% if(classname == "달님반") { %> selected <% } %>>달님반</option>
+              <option value="꽃님반" <% if(classname == "꽃님반") { %> selected <% } %>>꽃님반</option>
+            </select>
           </div>
           <div class="row" style="margin-top: 1%;">
             <div class="col-md-3"></div>
             <div class="panel panel-body col-md-6">
               <ul id="messages"></ul>
+            </div>
+            <div class="kb">
               <form action="" id="send">
-                <input id="m" autocomplete="off" />
-                <button>Send</button>
+                <input type="text" id="m" autocomplete="off" class="inin"/>
+                <button class="btn">보내기</button>
               </form>
             </div>
-            <div class="col-md-3"></div>
           </div>
+          <div class="col-md-3"></div>
+
         </div>
       </div>
     </div>
