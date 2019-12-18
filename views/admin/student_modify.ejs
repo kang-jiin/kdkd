@@ -26,10 +26,13 @@
                       <option value="달님반" <% if(student.class == "달님반") { %> selected <% } %>>달님반</option>
                       <option value="꽃님반" <% if(student.class == "꽃님반") { %> selected <% } %>>꽃님반</option>
                     </select>
-                    <label for="cln">학생이름</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25"
-                      value='<%=student.name%>'>
                   </div>
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">학생이름</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25"
+                    value='<%=student.name%>'>
                 </div>
 
                 <div class="form-group" align="left">
