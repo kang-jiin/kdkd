@@ -117,7 +117,6 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 //////////////////////////////////////////////////////////////
 
 app.get('/chat', (req, res) => {
-<<<<<<< HEAD
     let name = req.session.name;
     res.render('chat', {name: name});
 });
@@ -150,8 +149,6 @@ chat.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
-=======
-    res.render('chat');
 });
 
 //////////////////////////////////////////////////////////////
@@ -165,5 +162,4 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
     res.status(500);
     res.render('errpage');
->>>>>>> d02a73b1ad7bdf65c19e1f28bd68b6ed36bff182
 });
