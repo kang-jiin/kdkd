@@ -117,5 +117,36 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 //////////////////////////////////////////////////////////////
 
 app.get('/chat', (req, res) => {
-    res.render('chat');
+    let name = req.session.name;
+    res.render('chat', {name: name});
+});
+
+let room = ['room1', 'room2'];
+let a = 0;
+const chat = io.of('chat')
+chat.on('connection', (socket) => {
+    let num = 0;
+    let id;
+    console.log('a user connected');
+    socket.on('leaveRoom', (num, name) => {
+        socket.leave(room[num], () => {
+          console.log(name + ' leave a ' + room[num]);
+          chat.to(room[num]).emit('leaveRoom', num, name);
+        });
+      });
+    
+      socket.on('joinRoom', (num, name) => {
+        socket.join(room[num], () => {
+          console.log(name + ' join a ' + room[num]);
+          chat.to(room[num]).emit('joinRoom', num, name);
+        });
+      });
+    
+      socket.on('chat message', (num, name, msg) => {
+        a = num;
+        chat.to(room[a]).emit('chat message', name, msg);
+      });
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
 });

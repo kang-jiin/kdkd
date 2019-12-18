@@ -4,27 +4,87 @@
 <%- include('./includes/head.ejs') %>
 
 <body>
-	<!-- WRAPPER -->
-<div id="wrapper">
-	<%- include('./includes/navbar.ejs') %>
-	<%- include('./includes/sidebar.ejs') %>
-	<!-- MAIN -->
-	<div class="main">
-                
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    $(() => {
+      let name = '<%= name %>';
+
+      const socket = io('/chat');
+      let room = ['room1', 'room2'];
+      let num = 0;
+
+      socket.emit('joinRoom', num, name);
+
+      $('select').change(() => {
+        socket.emit('leaveRoom', num, name);
+        num++;
+        num = num % 2;
+        socket.emit('joinRoom', num, name);
+      });
 
 
+      $('#send').submit(() => {
+        socket.emit('chat message', num, name, $('#m').val());
+        $('#m').val('');
+        return false;
+      });
 
+      socket.on('chat message', (name, msg) => {
+        $('#messages').append($('<li>').text(name + '  :  ' +
+          msg));
+      });
 
+      socket.on('leaveRoom', (num, name) => {
+        $('#messages').append($('<li>').text(name + '    leaved ' +
+          room[num] + ' :('));
+      });
 
-
-
+      socket.on('joinRoom', (num, name) => {
+        $('#messages').append($('<li>').text(name + '    joined ' +
+          room[num] + ':)'));
+      });
+    });
+  </script>
+  <!-- WRAPPER -->
+  <div id="wrapper">
+    <%- include('./includes/navbar.ejs') %>
+    <%- include('./includes/sidebar.ejs') %>
+    <!-- MAIN -->
+    <div class="main">
+      <div class="main-content">
+        <div class="container-fluid">
+          <h3 class="page-title">채팅</h3>
+          <div class="select-box select-script">
+            <label for="selectbox">반선택</label>
+            <select id="selectbox" name="classname" title="선택해 주세요">
+              <option value="Room1">햇님반</option>
+              <option value="Room2">별님반</option>
+              <option value="달님반">달님반</option>
+              <option value="꽃님반">꽃님반</option>
+            </select>
+          </div>
+          <div class="row" style="margin-top: 1%;">
+            <div class="col-md-3"></div>
+            <div class="panel panel-body col-md-6">
+              <ul id="messages"></ul>
+              <form action="" id="send">
+                <input id="m" autocomplete="off" />
+                <button>Send</button>
+              </form>
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-<script src="/vendor/jquery/jquery.min.js"></script>
-	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-	<script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
-	<script src="/vendor/chartist/js/chartist.min.js"></script>
-	<script src="/scripts/klorofil-common.js"></script>
+  </div>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+  <script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+  <script src="/vendor/chartist/js/chartist.min.js"></script>
+  <script src="/scripts/klorofil-common.js"></script>
 </body>
+
 </html>
