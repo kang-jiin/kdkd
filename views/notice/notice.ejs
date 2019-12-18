@@ -75,6 +75,22 @@
 								</table>
 							</div>
 						</div>
+						<div class="text-center">
+							<ul class="pagination text-center">
+								<%var cont = Math.ceil(current/10);%>
+								<%if(cont>1){%>
+									<a class="nextgroup" href="/notice?page=<%=(cont-2)*10+1%>">이전</a>
+								<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+										<a class="pagebtns" href="/notice?page=<%=i%>"><%= i%></a>
+								<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+										<a class="pagebtns" href="/notice?page=<%=i%>"><%= i%></a>
+									<%}%>
+								<a class="nextgroup" href="/notice?page=<%=cont*10+1%>">다음</a>
+								<%}%>
+							</ul>
+						</div>
 					</div>
 					<div align="right">
 						<% if(user.grade == 'A') { %>

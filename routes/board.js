@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
     end as time, b.hit as hit
     from board b, user u
     where b.writer_id = u.id
-    order by b.time desc
+    order by b.id desc
     LIMIT ?, ?
     `;
 
@@ -38,20 +38,20 @@ router.get('/', (req, res) => {
     from board
     `;
     pool.getConnection((err, connection) => {
-        connection.query(select_board,[(page * 10) - 10, 9], (err, c_results, fields) => {
+        connection.query(select_board,[(page * 15) - 15, 15], (err, c_results) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_count, (err, countes, fields) =>{
+            connection.query(select_count, (err, countes) =>{
                 if (err) {
                     console.log(err);
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
                 connection.release();
-                res.render('board/board', { articles: c_results, pages: Math.ceil(countes[0].num/10), current: page});    
+                res.render('board/board', { articles: c_results, pages: Math.ceil(countes[0].num/15), current: page});    
             })
         });
     });
