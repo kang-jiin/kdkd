@@ -119,3 +119,16 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 app.get('/chat', (req, res) => {
     res.render('chat');
 });
+
+//////////////////////////////////////////////////////////////
+//               error page (무조건 맨밑!!)                  //
+//////////////////////////////////////////////////////////////
+
+app.use(function (req, res, next) {
+    throw new Error(req.url + ' not found');
+});
+
+app.use(function (err, req, res, next) {
+    res.status(500);
+    res.render('errpage');
+});
