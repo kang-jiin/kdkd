@@ -118,33 +118,32 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 
 app.get('/chat', (req, res) => {
     let name = req.session.name;
-    res.render('chat', {name: name});
+    let classname;
+    if(req.query.class != undefined) classname = req.query.class;
+    else classname = "전체";
+    res.render('chat', {name: name, classname: classname});
 });
 
-let room = ['room1', 'room2'];
-let a = 0;
 const chat = io.of('chat')
 chat.on('connection', (socket) => {
-    let num = 0;
-    let id;
+
     console.log('a user connected');
-    socket.on('leaveRoom', (num, name) => {
-        socket.leave(room[num], () => {
-          console.log(name + ' leave a ' + room[num]);
-          chat.to(room[num]).emit('leaveRoom', num, name);
+    socket.on('leaveRoom', (classname, name) => {
+        socket.leave(classname, () => {
+          console.log(name + ' leave a ' + classname);
+          chat.to(classname).emit('leaveRoom', classname, name);
         });
       });
     
-      socket.on('joinRoom', (num, name) => {
-        socket.join(room[num], () => {
-          console.log(name + ' join a ' + room[num]);
-          chat.to(room[num]).emit('joinRoom', num, name);
+      socket.on('joinRoom', (classname, name) => {
+        socket.join(classname, () => {
+          console.log(name + ' join a ' + classname);
+          chat.to(classname).emit('joinRoom', classname, name);
         });
       });
     
-      socket.on('chat message', (num, name, msg) => {
-        a = num;
-        chat.to(room[a]).emit('chat message', name, msg);
+      socket.on('chat message', (classname, name, msg) => {
+        chat.to(classname).emit('chat message', name, msg);
       });
     socket.on('disconnect', () => {
         console.log('user disconnected');
