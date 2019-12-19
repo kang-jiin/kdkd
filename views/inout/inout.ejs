@@ -222,6 +222,9 @@
 											function setData() {
 												jsonData = [
 													{ "month": 12, "day": 25, "text": "크리스마스" },
+													<% calresults.forEach(function (result) { %>
+														{ "year":<%=result.year %>, "month":<%=result.month %>, "day":<%=result.day %>, "text": "<p><%=result.content%></p>" },
+													<% }); %>
 													{ "month": 7, "day": 17, "text": "제헌절" }
 												]
 											}
@@ -232,9 +235,17 @@
 												var dateMatch = new Array();
 												var txt = new Array();
 												for (var i = 0; i < jsonData.length; i++) {
-													if (jsonData[i].month == month) {
-														dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
-														txt.push(jsonData[i].text);
+													if (jsonData[i].year == undefined) {
+														if(jsonData[i].month==month){
+															dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+															txt.push(jsonData[i].text);
+														}
+													}
+													else {
+														if (jsonData[i].year == year && jsonData[i].month == month) {
+															dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+															txt.push(jsonData[i].text);
+														}
 													}
 												}
 
