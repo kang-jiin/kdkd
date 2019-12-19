@@ -49,7 +49,17 @@
       });
     });
   </script>
-
+<script>
+  function on_ck(){
+    var text = document.getElementById("m").value;
+    var button = document.getElementById("SMS");
+    if(!text)
+    button.setAttribute("disabled", "");
+    else
+    button.removeAttribute("disabled");
+  }
+  
+</script>
   <!-- WRAPPER -->
   <div id="wrapper">
     <%- include('./includes/navbar.ejs') %>
@@ -77,8 +87,8 @@
             </div>
             <div class="kb">
               <form action="" id="send">
-                <input type="text" id="m" autocomplete="off" class="inin"/>
-                <button class="btn">보내기</button>
+                <input type="textarea" id="m" autocomplete="off" class="inin" onkeyup="on_ck()"/>
+                <button class="btn" id="SMS" disabled>보내기</button>
               </form>
             </div>
           </div>
