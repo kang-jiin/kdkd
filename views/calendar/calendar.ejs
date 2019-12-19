@@ -161,10 +161,7 @@
 												dateMatch.push(firstDay.getDay()+jsonData[i].day -1);
 												txt.push(jsonData[i].text);
 											}
-										}
-										console.log(dateMatch);
-										console.log(txt);
-										
+										}										
 										for(var i=0; i<dateMatch.length; i++)
 											$tdSche.eq(dateMatch[i]).append(txt[i]);
 									}

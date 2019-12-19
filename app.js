@@ -24,8 +24,12 @@ app.use(function (req, res, next) {
     req.session.grade = 'A';
     res.locals.user = req.session;
     res.locals.menu = req.url.split('/')[1];
-    if(!req.session.userid && res.locals.menu != 'user') {
+    let submenu = req.url.split('/')[2];
+    if(!req.session.userid && !req.session.passport && !(res.locals.menu == 'user')) {
         return res.redirect('/user/login');
+    }
+    if(req.session.grade == 'N' && !(res.locals.menu == 'user' && submenu == 'user_student_add')) {
+        return res.redirect('/user/user_student_add');
     }
     next();
 });
@@ -56,8 +60,15 @@ io.on('connection',function(socket){
       socket.broadcast.emit('stream',image);
     });
   });
-  
 //--------------Web Cam---------------
+
+//------------naver login-------------
+var passport = require('passport');
+
+app.use(passport.initialize());
+app.use(passport.session());
+//------------naver login-------------
+
 
 app.use('/user', require('./routes/user.js'));
 app.use('/notice', require('./routes/notice.js'));
@@ -126,27 +137,23 @@ app.get('/chat', (req, res) => {
 
 const chat = io.of('chat')
 chat.on('connection', (socket) => {
-
-    console.log('a user connected');
     socket.on('leaveRoom', (classname, name) => {
         socket.leave(classname, () => {
-          console.log(name + ' leave a ' + classname);
-          chat.to(classname).emit('leaveRoom', classname, name);
+            chat.to(classname).emit('leaveRoom', classname, name);
         });
-      });
-    
-      socket.on('joinRoom', (classname, name) => {
+    });
+
+    socket.on('joinRoom', (classname, name) => {
         socket.join(classname, () => {
-          console.log(name + ' join a ' + classname);
-          chat.to(classname).emit('joinRoom', classname, name);
+            chat.to(classname).emit('joinRoom', classname, name);
         });
-      });
-    
-      socket.on('chat message', (classname, name, msg) => {
+    });
+
+    socket.on('chat message', (classname, name, msg) => {
         chat.to(classname).emit('chat message', name, msg);
-      });
+    });
+
     socket.on('disconnect', () => {
-        console.log('user disconnected');
     });
 });
 
@@ -154,11 +161,11 @@ chat.on('connection', (socket) => {
 //               error page (무조건 맨밑!!)                  //
 //////////////////////////////////////////////////////////////
 
-app.use(function (req, res, next) {
-    throw new Error(req.url + ' not found');
-});
+// app.use(function (req, res, next) {
+//     throw new Error(req.url + ' not found');
+// });
 
-app.use(function (err, req, res, next) {
-    res.status(500);
-    res.render('errpage');
-});
+// app.use(function (err, req, res, next) {
+//     res.status(500);
+//     res.render('errpage');
+// });
