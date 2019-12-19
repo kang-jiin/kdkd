@@ -38,7 +38,12 @@
 											<td class="text-left"><%=insn.no%></td>
 											<td class="text-center"><%=insn.time%></td>
 											<td class="text-center"><%=insn.name%></td>
-											<td class="text-center">버스</th>
+											<td class="text-center"><% if(insn.code == "bus"){ %>
+																	버스
+																	<%}else {%>
+																	유치원
+																	<%}%>	
+											</td>
 										</tr>
 										<% }); %>
 									</tbody>
@@ -66,7 +71,12 @@
 											<td class="text-left"><%=outsn.no%></td>
 											<td class="text-center"><%=outsn.time%></td>
 											<td class="text-center"><%=outsn.name%></td>
-											<td class="text-center">유치원</td>
+											<td class="text-center"><% if(outsn.code == "bus"){ %>
+																	버스
+																	<%}else {%>
+																	유치원
+																	<%}%>
+											</td>
 										</tr>
 										<% }); %>
 									</tbody>
