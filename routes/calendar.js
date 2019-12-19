@@ -17,20 +17,28 @@ const router = require('express').Router();
 
 router.get('/', (req, res) => {
     let select_birth =`
-    select content, date_format(time, '%m') as month, date_format(time, '%d') as day 
-    from calendar
-    union
     select concat(name, " 생일") as content, date_format(birth, '%m') as month, date_format(birth, '%d') as day 
     from student
     `;
+    let select_cal = `
+    select content, date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day 
+    from calendar
+    `;
     pool.getConnection((err, connection) =>{
-        connection.query(select_birth, (err, result)=>{
+        connection.query(select_birth, (err, birth_results)=>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            res.render('calendar/calendar', {results : result});
+            connection.query(select_cal, (err, cal_results)=>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                res.render('calendar/calendar', {birth_results : birth_results, cal_results: cal_results});
+            });
         });
     });
 });
