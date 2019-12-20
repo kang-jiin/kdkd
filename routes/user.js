@@ -16,6 +16,7 @@ const pool = mysql.createPool({
 var sign_up_err = 0;
 var passport = require('passport'); //passport 추가
 var NaverStrategy = require('passport-naver').Strategy;
+var KakaoStrategy = require('passport-kakao').Strategy;
 
 const router = require('express').Router();
 
@@ -100,7 +101,7 @@ router.get('/naver/callback', passport.authenticate('naver', {
 })
 );
 
-//'네아로'에 신청한 정보 입력
+//'네아로'에 신청한 정보
 passport.use(new NaverStrategy({
     clientID: '7QOxIDDluRGu3c65_Emz',
     clientSecret: 'mbicEgAL13',
@@ -116,56 +117,43 @@ passport.use(new NaverStrategy({
                 provider: 'naver',
                 naver_id: profile.id
             };
-            return done(null, user);
-        });
-    }
-));
 
-//failed to serialize user into session 에러 발생 시 아래의 내용을 추가 한다.
-passport.serializeUser(function (user, done) {    
-    let select_user = `
-        select id
-        from user
-        where naver_id = ?
-    `;
-
-    let emailid = user.email.split('@')[0];
-    let emaildomain = user.email.split('@')[1];
-    let values = [user.id, "N", user.name, emailid, emaildomain, user.naver_id];
-    let user_insert = `
-    insert into user (id, grade, name, emailid, emaildomain, naver_id)
-    values(?, ?, ?, ?, ?, ?)
-    `;
-    pool.getConnection((err, connection) => {
-        connection.query(select_user, user.naver_id, (err, result) => {
-            if (err) {
-                console.log(err);
-                connection.release();
-                res.status(500).send('Internal Server Error!!!')
-            }
-            if (result.length == 0) {
-                connection.query(user_insert, values, (err) => {
+            let select_user = `
+                select id
+                from user
+                where naver_id = ?
+            `;
+            pool.getConnection((err, connection) => {
+                connection.query(select_user, user.naver_id, (err, result) => {
                     if (err) {
                         console.log(err);
                         connection.release();
                         res.status(500).send('Internal Server Error!!!')
                     }
-                    connection.release();
+                    if (result.length == 0) {        
+                        let emailid = user.email.split('@')[0];
+                        let emaildomain = user.email.split('@')[1];
+                        let values = [user.id, "N", user.name, emailid, emaildomain, user.naver_id];
+                        let user_insert = `
+                        insert into user (id, grade, name, emailid, emaildomain, naver_id)
+                        values(?, ?, ?, ?, ?, ?)
+                        `;
+                        connection.query(user_insert, values, (err) => {
+                            if (err) {
+                                console.log(err);
+                                connection.release();
+                                res.status(500).send('Internal Server Error!!!')
+                            }
+                            connection.release();
+                        });
+                    }
                 });
-            }
-        });
-    });
-    done(null, user);
-});
+            });
 
-// 새로 등록하여 로그인
-passport.deserializeUser(function (req, user, done) {
-    // passport로 로그인 처리 후 해당 정보를 session에 담는다.
-    req.session.userid = user.id;
-    req.session.name = user.name;
-    console.log("Session Check :" + req.session.userid);
-    done(null, user);
-});
+            return done(null, user);
+        });
+    }
+));
 
 router.get('/naver/login', (req, res) => {
     const sess = req.session;
@@ -195,6 +183,108 @@ router.get('/naver/login', (req, res) => {
             }
         });
     });
+});
+
+router.get('/kakao', passport.authenticate('kakao', null), function (req, res) {
+    console.log("/main/kakao");
+});
+
+//처리 후 callback 처리 부분 성공/실패 시 리다이렉트 설정
+router.get('/kakao/callback', passport.authenticate('kakao', {
+    successRedirect: '/user/kakao/login',
+    failureRedirect: '/user/login'
+})
+);
+
+passport.use(new KakaoStrategy({
+    clientID: 'f951983d31e09d40c986abb400ae1e9c',
+    callbackURL: '/user/kakao/callback'
+},
+
+    function (accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+            var user = {
+                id: 'kakao_' + profile.id,
+                name: profile.username,
+                provider: 'kakao',
+                kakao_id: profile.id
+            };
+
+            let select_user = `
+                select id
+                from user
+                where kakao_id = ?
+            `;
+            pool.getConnection((err, connection) => {
+                connection.query(select_user, user.kakao_id, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    if (result.length == 0) {        
+                        let values = [user.id, "N", user.name, user.kakao_id];
+                        let user_insert = `
+                        insert into user (id, grade, name, kakao_id)
+                        values(?, ?, ?, ?)
+                        `;
+                        connection.query(user_insert, values, (err) => {
+                            if (err) {
+                                console.log(err);
+                                connection.release();
+                                res.status(500).send('Internal Server Error!!!')
+                            }
+                            connection.release();
+                        });
+                    }
+                });
+            });
+
+            return done(null, user);
+        });
+    }
+));
+
+router.get('/kakao/login', (req, res) => {
+    const sess = req.session;
+    let id = sess.userid;
+    let select_relation = `
+        select *
+        from relation
+        where parents_id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_relation, id, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            if (result.length == 0) {
+                req.session.grade = 'N';
+                res.redirect('/user/user_student_add');
+            }
+            else {
+                req.session.grade = 'P';
+                res.redirect('/home');
+            }
+        });
+    });
+});
+
+//failed to serialize user into session 에러 발생 시 아래의 내용을 추가 한다.
+passport.serializeUser(function (user, done) {    
+    done(null, user);
+});
+
+passport.deserializeUser(function (req, user, done) {
+    // passport로 로그인 처리 후 해당 정보를 session에 담는다.
+    req.session.userid = user.id;
+    req.session.name = user.name;
+    console.log("Session Check :" + req.session.userid);
+    done(null, user);
 });
 
 
