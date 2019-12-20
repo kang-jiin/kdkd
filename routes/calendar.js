@@ -68,5 +68,11 @@ router.post('/add', (req, res) => {
         });
     });
 });
+//수정 부분
+router.get('/modify', (req,res)=>{
+
+    res.render('calendar/modify');
+});
+
 
 module.exports = router;

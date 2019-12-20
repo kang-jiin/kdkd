@@ -159,6 +159,7 @@
 										setData();
 										var dateMatch = new Array();
 										var txt = new Array();
+										var ttt = "/calendar/modify"
 										for(var i=0; i < jsonData.length; i++){
 											if (jsonData[i].year == undefined) {
 												if(jsonData[i].month==month){
@@ -169,7 +170,7 @@
 											else {
 												if (jsonData[i].year == year && jsonData[i].month == month) {
 													dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
-													txt.push(jsonData[i].text);
+													txt.push("<a href="+ttt+">"+jsonData[i].text+"</a>");
 												}
 											}
 										}										
