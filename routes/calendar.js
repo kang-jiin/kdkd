@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
     from student
     `;
     let select_cal = `
-    select content, date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day 
+    select content, date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day, id 
     from calendar
     `;
     pool.getConnection((err, connection) =>{
@@ -70,9 +70,64 @@ router.post('/add', (req, res) => {
 });
 //수정 부분
 router.get('/modify', (req,res)=>{
-
-    res.render('calendar/modify');
+    let id = req.query.id;
+    let calendar_select=`
+    select id, date_format(time, '%Y-%m-%d') as time, content 
+    from calendar
+    where id = ? 
+    `
+    pool.getConnection((err, connecction)=>{
+        connecction.query(calendar_select, id, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.render('calendar/modify',{ article: result[0]});
+        });
+    });
 });
 
+router.post('/modify', (req, res)=>{
+    let id = req.query.id;
+    let caldate = req.body.caldate;
+    let content = req.body.content;
+    let values = [caldate, content, id];
+    let update_modify =`
+    update calendar 
+    set time = ?, content = ?
+    where id = ?
+    `;
+    pool.getConnection((err, connecction)=>{
+        connecction.query(update_modify, values, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.redirect('/calendar');
+        });
+    });
+});
+
+router.get('/modify_delete',(req,res)=>{
+    let id = req.query.id;
+
+    let delete_cal =` 
+    delete from calendar
+    where id = ?
+    `;
+
+    pool.getConnection((err, connecction) =>{
+        connecction.query(delete_cal, id, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.redirect('/calendar');
+        });
+    });
+});
 
 module.exports = router;
