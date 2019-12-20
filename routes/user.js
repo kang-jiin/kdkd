@@ -34,19 +34,6 @@ router.post('/login', (req, res) => {
     from user
     where id=? and password=?;
     `;
-    let inout_query = `
-    select s.id as id, s.name as name, io.in_out_flag, t.time
-    from 
-    relation r inner join student s on r.student_id = s.id
-    left outer join (select student_id, max(time) as time
-    from in_out
-    where date_format(time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
-    group by student_id
-    ) t
-    on s.id = t.student_id
-    left outer join in_out io on io.time = t.time
-    where r.parents_id = ?
-    `;
 
     pool.getConnection((err, connection) => {
         connection.query(login_query, values, (err, login_results) => {
@@ -57,30 +44,17 @@ router.post('/login', (req, res) => {
             }
 
             if (login_results.length == 1) {
-                connection.query(inout_query, userid, (err, inout_results) => {
-                    if (err) {
-                        console.log(err);
-                        connection.release();
-                        res.status(500).send('Internal Server Error!!!')
-                    }
-                    var msg = "";
-                    for(let i=0; i<inout_results.length; i++){ 
-                        msg += inout_results[i].name;
-                        if(inout_results[i].in_out_flag == "in") msg += " 등원";
-                        else if(inout_results[i].in_out_flag == "out") msg += " 하원";
-                        else msg += " 미등원";
-                        if(i != inout_results.length-1) {
-                            msg +=",  ";
-                        }
-                    }
-                    sess.userid = login_results[0].id;
-                    sess.name = login_results[0].name;
-                    sess.grade = login_results[0].grade;
-                    sess.msg = msg;
-                    req.session.save(() => {
-                        connection.release();
-                        res.redirect('/home');
-                    });
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                sess.userid = login_results[0].id;
+                sess.name = login_results[0].name;
+                sess.grade = login_results[0].grade;
+                req.session.save(() => {
+                    connection.release();
+                    res.redirect('/home');
                 });
             } else {
                 connection.release();
