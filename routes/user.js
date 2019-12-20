@@ -172,7 +172,6 @@ router.get('/naver/login', (req, res) => {
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
-            console.log(result);
             if (result.length == 0) {
                 req.session.grade = 'N';
                 res.redirect('/user/user_student_add');
@@ -283,7 +282,7 @@ passport.deserializeUser(function (req, user, done) {
     // passport로 로그인 처리 후 해당 정보를 session에 담는다.
     req.session.userid = user.id;
     req.session.name = user.name;
-    console.log("Session Check :" + req.session.userid);
+    // console.log("Session Check :" + req.session.userid);
     done(null, user);
 });
 
