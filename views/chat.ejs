@@ -31,17 +31,17 @@
 
     });
   </script>
-<script>
-  function on_ck(){
-    var text = document.getElementById("m").value;
-    var button = document.getElementById("SMS");
-    if(!text)
-    button.setAttribute("disabled", "");
-    else
-    button.removeAttribute("disabled");
-  }
+  <script>
+    function on_ck() {
+      var text = document.getElementById("m").value;
+      var button = document.getElementById("SMS");
+      if (!text)
+        button.setAttribute("disabled", "");
+      else
+        button.removeAttribute("disabled");
+    }
+  </script>
   
-</script>
   <!-- WRAPPER -->
   <div id="wrapper">
     <%- include('./includes/navbar.ejs') %>
@@ -66,17 +66,17 @@
             <div class="col-md-3"></div>
             <div class="panel panel-body col-md-6">
               <ul id="messages">
-                  
-                    <% for (let i = select_chat_result.length - 1; i > -1; i--) { %>
-                      <li><%= select_chat_result[i].writer_id %> : <%= select_chat_result[i].content %></li>
-                    <% } %>
+
+                <% for (let i = select_chat_result.length - 1; i > -1; i--) { %>
+                <li><%= select_chat_result[i].writer_id %> : <%= select_chat_result[i].content %></li>
+                <% } %>
               </ul>
             </div>
-            
+
           </div>
           <div class="kb">
             <form action="" id="send">
-              <input type="textarea" id="m" autocomplete="off" class="inin" onkeyup="on_ck()"/>
+              <input type="textarea" id="m" autocomplete="off" class="inin" onkeyup="on_ck()" />
               <button class="btn" id="SMS" disabled>보내기</button>
             </form>
           </div>
