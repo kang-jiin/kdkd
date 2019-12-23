@@ -164,11 +164,34 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 //////////////////////////////////////////////////////////////
 
 app.get('/chat', (req, res) => {
+    let userid = req.session.userid;
     let name = req.session.name;
     let classname;
     if(req.query.class != undefined) classname = req.query.class;
     else classname = "전체";
-    res.render('chat', {name: name, classname: classname});
+
+    let select_chat_log = `
+        select * from chat
+        where class = ?
+        order by id desc
+        limit 0, 50
+    `;
+
+    
+    pool.getConnection((err, connection) => {
+
+        connection.query(select_chat_log, classname, (err, select_chat_result) => {
+            if (err) {
+                connection.release();                
+                throw err;
+            }
+            connection.release();
+            
+            res.render('chat', {userid: userid, name: name, classname: classname, select_chat_result: select_chat_result});
+        })
+    })
+
+    
 });
 
 const chat = io.of('chat')
@@ -185,8 +208,24 @@ chat.on('connection', (socket) => {
         });
     });
 
-    socket.on('chat message', (classname, name, msg) => {
-        chat.to(classname).emit('chat message', name, msg);
+    socket.on('chat message', (classname, userid, msg) => {
+        let insert_chat_log = `
+            insert into chat (writer_id, class, content)
+            values (?, ?, ?)
+        `;       
+
+        pool.getConnection((err, connection) => {
+
+            connection.query(insert_chat_log, [userid, classname, msg], (err) => {
+                if (err) {
+                    connection.release();                
+                    throw err;
+                }
+                connection.release();
+                chat.to(classname).emit('chat message', userid, msg);
+            })
+        })
+
     });
 
     socket.on('disconnect', () => {
