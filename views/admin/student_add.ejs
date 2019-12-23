@@ -4,6 +4,19 @@
 <%- include('../includes/head.ejs') %>
 
 <body>
+  <script>
+    $(() => {
+      let classname = 'rfid';
+
+      const socket = io('/chat');
+
+      socket.emit('joinRoom', classname, name);
+      
+      socket.on('rfid_data', (data) => {
+        $('#rfid').val(data);
+      });
+    });
+  </script>
   <!-- WRAPPER -->
   <div id="wrapper">
     <%- include('../includes/navbar.ejs') %>

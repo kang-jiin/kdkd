@@ -151,6 +151,32 @@ chat.on('connection', (socket) => {
 });
 
 //////////////////////////////////////////////////////////////
+//                     시리얼통신 (RFID)                     //
+//////////////////////////////////////////////////////////////
+
+const SerialPort = require('serialport');
+
+const port = new SerialPort("COM10", {
+    baudRate: 9600
+},false)
+
+let result = "";
+port.open(() => {
+    console.log('connected...');  
+    port.on('data', (data) => {
+        // 아두이노에서 오는 데이터를 출력한다.
+        let len = data.length;
+        result += data;
+        console.log(result);
+        
+        if(data[len-2] == 13 && data[len-1] == 10) {
+            chat.to('rfid').emit('rfid_data', result);
+            result = "";
+        }
+    }); 
+});
+
+//////////////////////////////////////////////////////////////
 //               error page (무조건 맨밑!!)                  //
 //////////////////////////////////////////////////////////////
 
