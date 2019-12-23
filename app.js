@@ -25,7 +25,7 @@ app.use(function (req, res, next) {
     res.locals.user = req.session;
     res.locals.menu = req.url.split('/')[1];
     let submenu = req.url.split('/')[2];
-    if(!req.session.userid && !req.session.passport && !(res.locals.menu == 'user')) {
+    if(!req.session.userid && !req.session.passport && !(res.locals.menu == 'user' && (submenu != 'mypage' && submenu != 'user_student_add'))) {
         return res.redirect('/user/login');
     }
     if(req.session.grade == 'N' && !(res.locals.menu == 'user' && submenu == 'user_student_add')) {
@@ -190,6 +190,32 @@ chat.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
     });
+});
+
+//////////////////////////////////////////////////////////////
+//                     시리얼통신 (RFID)                     //
+//////////////////////////////////////////////////////////////
+
+const SerialPort = require('serialport');
+
+const port = new SerialPort("COM10", {
+    baudRate: 9600
+},false)
+
+let result = "";
+port.open(() => {
+    console.log('connected...');  
+    port.on('data', (data) => {
+        // 아두이노에서 오는 데이터를 출력한다.
+        let len = data.length;
+        result += data;
+        console.log(result);
+        
+        if(data[len-2] == 13 && data[len-1] == 10) {
+            chat.to('rfid').emit('rfid_data', result);
+            result = "";
+        }
+    }); 
 });
 
 //////////////////////////////////////////////////////////////
