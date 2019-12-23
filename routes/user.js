@@ -14,11 +14,13 @@ const pool = mysql.createPool({
 });
 
 var sign_up_err = 0;
+var passport = require('passport'); //passport 추가
+var NaverStrategy = require('passport-naver').Strategy;
+var KakaoStrategy = require('passport-kakao').Strategy;
 
 const router = require('express').Router();
 
 router.get('/login', (req, res) => {
-    const sess = req.session;
     res.render('user/login', { pass: true });
 });
 
@@ -32,19 +34,6 @@ router.post('/login', (req, res) => {
     from user
     where id=? and password=?;
     `;
-    let inout_query = `
-    select s.id as id, s.name as name, io.in_out_flag, t.time
-    from 
-    relation r inner join student s on r.student_id = s.id
-    left outer join (select student_id, max(time) as time
-    from in_out
-    where date_format(time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
-    group by student_id
-    ) t
-    on s.id = t.student_id
-    left outer join in_out io on io.time = t.time
-    where r.parents_id = ?
-    `;
 
     pool.getConnection((err, connection) => {
         connection.query(login_query, values, (err, login_results) => {
@@ -55,30 +44,17 @@ router.post('/login', (req, res) => {
             }
 
             if (login_results.length == 1) {
-                connection.query(inout_query, userid, (err, inout_results) => {
-                    if (err) {
-                        console.log(err);
-                        connection.release();
-                        res.status(500).send('Internal Server Error!!!')
-                    }
-                    var msg = "";
-                    for(let i=0; i<inout_results.length; i++){ 
-                        msg += inout_results[i].name;
-                        if(inout_results[i].in_out_flag == "in") msg += " 등원";
-                        else if(inout_results[i].in_out_flag == "out") msg += " 하원";
-                        else msg += " 미등원";
-                        if(i != inout_results.length-1) {
-                            msg +=",  ";
-                        }
-                    }
-                    sess.userid = login_results[0].id;
-                    sess.name = login_results[0].name;
-                    sess.grade = login_results[0].grade;
-                    sess.msg = msg;
-                    req.session.save(() => {
-                        connection.release();
-                        res.redirect('/home');
-                    });
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                sess.userid = login_results[0].id;
+                sess.name = login_results[0].name;
+                sess.grade = login_results[0].grade;
+                req.session.save(() => {
+                    connection.release();
+                    res.redirect('/home');
                 });
             } else {
                 connection.release();
@@ -87,6 +63,203 @@ router.post('/login', (req, res) => {
         })
     });
 });
+
+router.get('/naver', passport.authenticate('naver', null), function (req, res) {
+    console.log("/main/naver");
+});
+
+//처리 후 callback 처리 부분 성공/실패 시 리다이렉트 설정
+router.get('/naver/callback', passport.authenticate('naver', {
+    successRedirect: '/user/naver/login',
+    failureRedirect: '/user/login'
+})
+);
+
+//'네아로'에 신청한 정보
+passport.use(new NaverStrategy({
+    clientID: '7QOxIDDluRGu3c65_Emz',
+    clientSecret: 'mbicEgAL13',
+    callbackURL: '/user/naver/callback'
+},
+
+    function (accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+            var user = {
+                id: 'naver_' + profile.id,
+                name: profile.displayName,
+                email: profile.emails[0].value,
+                provider: 'naver',
+                naver_id: profile.id
+            };
+
+            let select_user = `
+                select id
+                from user
+                where naver_id = ?
+            `;
+            pool.getConnection((err, connection) => {
+                connection.query(select_user, user.naver_id, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    if (result.length == 0) {        
+                        let emailid = user.email.split('@')[0];
+                        let emaildomain = user.email.split('@')[1];
+                        let values = [user.id, "N", user.name, emailid, emaildomain, user.naver_id];
+                        let user_insert = `
+                        insert into user (id, grade, name, emailid, emaildomain, naver_id)
+                        values(?, ?, ?, ?, ?, ?)
+                        `;
+                        connection.query(user_insert, values, (err) => {
+                            if (err) {
+                                console.log(err);
+                                connection.release();
+                                res.status(500).send('Internal Server Error!!!')
+                            }
+                            connection.release();
+                        });
+                    }
+                });
+            });
+
+            return done(null, user);
+        });
+    }
+));
+
+router.get('/naver/login', (req, res) => {
+    const sess = req.session;
+    let id = sess.userid;
+    let select_relation = `
+        select *
+        from relation
+        where parents_id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_relation, id, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            if (result.length == 0) {
+                req.session.grade = 'N';
+                res.redirect('/user/user_student_add');
+            }
+            else {
+                req.session.grade = 'P';
+                res.redirect('/home');
+            }
+        });
+    });
+});
+
+router.get('/kakao', passport.authenticate('kakao', null), function (req, res) {
+    console.log("/main/kakao");
+});
+
+//처리 후 callback 처리 부분 성공/실패 시 리다이렉트 설정
+router.get('/kakao/callback', passport.authenticate('kakao', {
+    successRedirect: '/user/kakao/login',
+    failureRedirect: '/user/login'
+})
+);
+
+passport.use(new KakaoStrategy({
+    clientID: 'f951983d31e09d40c986abb400ae1e9c',
+    callbackURL: '/user/kakao/callback'
+},
+
+    function (accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+            var user = {
+                id: 'kakao_' + profile.id,
+                name: profile.username,
+                provider: 'kakao',
+                kakao_id: profile.id
+            };
+
+            let select_user = `
+                select id
+                from user
+                where kakao_id = ?
+            `;
+            pool.getConnection((err, connection) => {
+                connection.query(select_user, user.kakao_id, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    if (result.length == 0) {        
+                        let values = [user.id, "N", user.name, user.kakao_id];
+                        let user_insert = `
+                        insert into user (id, grade, name, kakao_id)
+                        values(?, ?, ?, ?)
+                        `;
+                        connection.query(user_insert, values, (err) => {
+                            if (err) {
+                                console.log(err);
+                                connection.release();
+                                res.status(500).send('Internal Server Error!!!')
+                            }
+                            connection.release();
+                        });
+                    }
+                });
+            });
+
+            return done(null, user);
+        });
+    }
+));
+
+router.get('/kakao/login', (req, res) => {
+    const sess = req.session;
+    let id = sess.userid;
+    let select_relation = `
+        select *
+        from relation
+        where parents_id = ?
+    `;
+
+    pool.getConnection((err, connection) => {
+        connection.query(select_relation, id, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            connection.release();
+            if (result.length == 0) {
+                req.session.grade = 'N';
+                res.redirect('/user/user_student_add');
+            }
+            else {
+                req.session.grade = 'P';
+                res.redirect('/home');
+            }
+        });
+    });
+});
+
+//failed to serialize user into session 에러 발생 시 아래의 내용을 추가 한다.
+passport.serializeUser(function (user, done) {    
+    done(null, user);
+});
+
+passport.deserializeUser(function (req, user, done) {
+    // passport로 로그인 처리 후 해당 정보를 session에 담는다.
+    req.session.userid = user.id;
+    req.session.name = user.name;
+    // console.log("Session Check :" + req.session.userid);
+    done(null, user);
+});
+
 
 router.get('/signup', (req, res) => {
     let get_id = `
@@ -279,7 +452,6 @@ router.post('/mypage', (req, res) => {
             }
             sess.userid = id;
             sess.name = name;
-            sess.grade = "G";
             req.session.save(() => {
                 res.redirect('/');
             });
@@ -330,6 +502,11 @@ router.post('/user_student_add', (req, res) => {
     insert into relation (student_id, parents_id)
     values(?, ?)
     `;
+    let user_update = `
+    update user set
+    grade = 'P'
+    where id = ?
+    `;
 
     pool.getConnection((err, connection) => {
         connection.query(select_student, values, (err, result) => {
@@ -338,11 +515,20 @@ router.post('/user_student_add', (req, res) => {
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
+            
             if (result.length > 0) {
                 let realation_values = [result[0].id, id];
                 connection.query(relation_insert, realation_values, (err, result) => {
-                    connection.release();
-                    res.redirect('/home');
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    connection.query(user_update, id, (err, result) => {
+                        connection.release();
+                        sess.grade = 'P';
+                        res.redirect('/home');
+                    });
                 });
             } else {
                 sign_up_err = 1;

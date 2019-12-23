@@ -59,7 +59,7 @@
 										setTableHTML+='<table class="calendar">';
 										setTableHTML+='<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr>';
 										for(var i=0;i<6;i++){
-											setTableHTML+='<tr height="100">';
+											setTableHTML+='<tr height="100" width="100%">';
 											for(var j=0;j<7;j++){
 												setTableHTML+='<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap">';
 												setTableHTML+='    <div class="cal-day"></div>';
@@ -144,8 +144,11 @@
 									function setData(){
 										jsonData = [
 											{"month":12, "day":25, "text":"크리스마스"},
-											<% results.forEach(function(result){ %>
+											<% birth_results.forEach(function(result){ %>
 												{"month":<%=result.month%>, "day":<%=result.day%>, "text":"<p><%=result.content%></p>"},
+											<% }); %>
+											<% cal_results.forEach(function(result){ %>
+												{"id":<%=result.id%>, "year":<%=result.year%>, "month":<%=result.month%>, "day":<%=result.day%>, "text":"<p><%=result.content%></p>"},
 											<% }); %>	
 											{"month":7, "day":17, "text":"제헌절"}
 										]
@@ -156,15 +159,24 @@
 										setData();
 										var dateMatch = new Array();
 										var txt = new Array();
-										for(var i=0; i < jsonData.length; i++){
-											if(jsonData[i].month==month){
-												dateMatch.push(firstDay.getDay()+jsonData[i].day -1);
-												txt.push(jsonData[i].text);
-											}
-										}
-										console.log(dateMatch);
-										console.log(txt);
+										var ttt = "";
 										
+										for(var i=0; i < jsonData.length; i++){
+											
+											if (jsonData[i].year == undefined) {
+												if(jsonData[i].month==month){
+													dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+													txt.push(jsonData[i].text);
+												}
+											}
+											else {
+												ttt = "/calendar/modify?id="+jsonData[i].id;
+												if (jsonData[i].year == year && jsonData[i].month == month) {
+													dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+													txt.push("<a href="+ttt+">"+jsonData[i].text+"</a>");
+												}
+											}
+										}										
 										for(var i=0; i<dateMatch.length; i++)
 											$tdSche.eq(dateMatch[i]).append(txt[i]);
 									}

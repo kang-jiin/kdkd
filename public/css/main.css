@@ -284,7 +284,7 @@ html.fullscreen-bg #wrapper {
       display: table-cell;
       width: 1%;
       position: inherit;
-      text-align: center; }
+      text-align: right; }
     .navbar-nav > li > a {
       padding: 15px 20px; }
       .navbar-nav > li > a span:not(.badge),

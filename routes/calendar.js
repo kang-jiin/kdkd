@@ -17,20 +17,28 @@ const router = require('express').Router();
 
 router.get('/', (req, res) => {
     let select_birth =`
-    select content, date_format(time, '%m') as month, date_format(time, '%d') as day 
-    from calendar
-    union
     select concat(name, " 생일") as content, date_format(birth, '%m') as month, date_format(birth, '%d') as day 
     from student
     `;
+    let select_cal = `
+    select content, date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day, id 
+    from calendar
+    `;
     pool.getConnection((err, connection) =>{
-        connection.query(select_birth, (err, result)=>{
+        connection.query(select_birth, (err, birth_results)=>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            res.render('calendar/calendar', {results : result});
+            connection.query(select_cal, (err, cal_results)=>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                res.render('calendar/calendar', {birth_results : birth_results, cal_results: cal_results});
+            });
         });
     });
 });
@@ -56,6 +64,67 @@ router.post('/add', (req, res) => {
                 res.status(500).send('Internal Server Error!!!')
             }
             connection.release();
+            res.redirect('/calendar');
+        });
+    });
+});
+//수정 부분
+router.get('/modify', (req,res)=>{
+    let id = req.query.id;
+    let calendar_select=`
+    select id, date_format(time, '%Y-%m-%d') as time, content 
+    from calendar
+    where id = ? 
+    `
+    pool.getConnection((err, connecction)=>{
+        connecction.query(calendar_select, id, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.render('calendar/modify',{ article: result[0]});
+        });
+    });
+});
+
+router.post('/modify', (req, res)=>{
+    let id = req.query.id;
+    let caldate = req.body.caldate;
+    let content = req.body.content;
+    let values = [caldate, content, id];
+    let update_modify =`
+    update calendar 
+    set time = ?, content = ?
+    where id = ?
+    `;
+    pool.getConnection((err, connecction)=>{
+        connecction.query(update_modify, values, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
+            res.redirect('/calendar');
+        });
+    });
+});
+
+router.get('/modify_delete',(req,res)=>{
+    let id = req.query.id;
+
+    let delete_cal =` 
+    delete from calendar
+    where id = ?
+    `;
+
+    pool.getConnection((err, connecction) =>{
+        connecction.query(delete_cal, id, (err, result)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!')
+            }
             res.redirect('/calendar');
         });
     });
