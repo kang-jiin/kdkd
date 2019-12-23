@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <%- include('../includes/navbar.ejs') %>
+        <%- include('../includes/sidebar.ejs') %>
+        <!-- MAIN -->
+        <div class="main">
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <div class="container-fluid">
+                    <h2 class="display-4">글 보기</h2>
+                    <div align="right">
+                        <button class="btn btn-secondary" onclick="location.href = '/board';">목록</button>
+                        <button class="btn btn-secondary"
+                            onclick="location.href = '/board/modify?num=';">수정</button>
+                        <button class="btn btn-secondary"
+                            onclick="location.href='/board/delete?num=';">삭제</button>
+
+                    </div>
+                    <div class="row">
+                        <div class="panel panel-headline">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <colgroup>
+                                        <col width="100">
+                                        <col width="*">
+                                        <col width="100">
+                                        <col width="*">
+                                        <col width="100">
+                                        <col width="*">
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td>제목</td>
+                                            <td colspan="5"><strong>
+                                                    숫자
+                                                    이름</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>작성자</td>
+                                            <td>
+                                                관리자
+                                            </td>
+                                            <td>조회수</td>
+                                            <td>
+                                                hit
+                                            </td>
+                                            <td>작성일</td>
+                                            <td>
+                                                day
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <br />
+                                               사진뛰울꺼임
+                                                <br />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END MAIN CONTENT -->
+                </div>
+            </div>
+        </div>
+        <!-- END MAIN -->
+    </div>
+    <!-- END WRAPPER -->
+    <!-- Javascript -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/vendor/chartist/js/chartist.min.js"></script>
+    <script src="/scripts/klorofil-common.js"></script>
+    </div>
+</body>
+
+</html>

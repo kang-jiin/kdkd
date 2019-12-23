@@ -25,7 +25,7 @@ app.use(function (req, res, next) {
     res.locals.user = req.session;
     res.locals.menu = req.url.split('/')[1];
     let submenu = req.url.split('/')[2];
-    if(!req.session.userid && !req.session.passport && !(res.locals.menu == 'user')) {
+    if(!req.session.userid && !req.session.passport && !(res.locals.menu == 'user' && (submenu != 'mypage' && submenu != 'user_student_add'))) {
         return res.redirect('/user/login');
     }
     if(req.session.grade == 'N' && !(res.locals.menu == 'user' && submenu == 'user_student_add')) {
@@ -76,6 +76,7 @@ app.use('/board', require('./routes/board.js'));
 app.use('/calendar', require('./routes/calendar.js'));
 app.use('/inout', require('./routes/inout.js'));
 app.use('/admin', require('./routes/admin.js'));
+app.use('/photo', require('./routes/photo.js'));
 
 //////////////////////////////////////////////////////////////
 //                      HOME                                //
