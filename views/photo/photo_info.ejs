@@ -15,12 +15,10 @@
                 <div class="container-fluid">
                     <h2 class="display-4">글 보기</h2>
                     <div align="right">
-                        <button class="btn btn-secondary" onclick="location.href = '/photo';">목록</button>
-                        <button class="btn btn-secondary"
-                            onclick="location.href = '/photo/modify?num=<%=article.id%>';">수정</button>
-                        <button class="btn btn-secondary"
-                            onclick="location.href='/photo/delete?num=<%=article.id%>';">삭제</button>
-
+                        <button class="btn btn-info" onclick="location.href = '/photo';">목록</button>
+                        <% if(user.userid == article.writer_id ) { %>
+                        <button class="btn btn-danger" onclick="location.href='/photo/delete?num=<%=article.id%>';">삭제</button>
+                        <% }%>
                     </div>
                     <div class="row">
                         <div class="panel panel-headline">
@@ -59,8 +57,7 @@
                                         <tr>
                                             <td colspan="6">
                                                 <br />
-                                                <img style="width: 60%; min-height: 70%;"
-                                                src="<%=article.savefolder%>/<%=article.savename%>" alt="">
+                                                <img style="max-width: 100%; height: auto;" src="<%=article.savefolder%>/<%=article.savename%>" alt="">
                                                 <br />
                                             </td>
                                         </tr>
