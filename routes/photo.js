@@ -154,5 +154,53 @@ router.post('/add', upload.single('picture'), (req,res)=>{
     });
 })
 
+router.get('/modify',(req,res)=>{
+    res.render('photo/add');
+})
+
+router.get('/delete',(req,res)=>{
+    let num = req.query.num;
+    
+    let photo_data = `
+        select *
+        from photo
+        where id = ?
+    `;
+    let photo_delete = `
+        delete from photo
+        where id = ?
+    `;
+
+    console.log(num);
+    
+    pool.getConnection((err, connection) => {
+        connection.query(photo_data, num, (err, result) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            console.log(result);
+            connection.query(photo_delete, num, (err) => {
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!');
+                }
+                if (result[0].savefolder) {
+                    fs.unlink('./uploads/' + result[0].savefolder + '/' + result[0].savename, (err) => {
+                        if (err) {
+                            console.log(err);
+                            conn.release();
+                            throw err;
+                        }
+                    });
+                }
+                res.redirect('/photo');
+            });
+        });
+    });
+})
+
 
 module.exports = router;
