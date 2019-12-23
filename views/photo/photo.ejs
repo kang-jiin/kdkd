@@ -23,9 +23,9 @@
 								<!-- 여기서부터 -->
 								<% for(let i = 0; i < c_article.length; i++) { %>
 								<div class="col-lg-4 col-sm-6 portfolio-item">
-									<div class="hovereffect">
+									<div class="hovereffect" style="margin-top: 15%;">
 										<a class="info" href="/photo/photo_info?num=<%= c_article[i].id %>">
-											<img style="width: 100%; min-height: 200px; max-height: 200px"
+											<img style="width: 100%; min-height: 300px; max-height: 100px"
 												src="<%=c_article[i].savefolder%>/<%=c_article[i].savename%>" alt="">
 											<div class="overlay" align="center">
 												<div>
