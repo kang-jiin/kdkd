@@ -76,6 +76,7 @@ app.use('/board', require('./routes/board.js'));
 app.use('/calendar', require('./routes/calendar.js'));
 app.use('/inout', require('./routes/inout.js'));
 app.use('/admin', require('./routes/admin.js'));
+app.use('/photo', require('./routes/photo.js'));
 
 //////////////////////////////////////////////////////////////
 //                      HOME                                //
