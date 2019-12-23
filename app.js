@@ -6,11 +6,12 @@ const session = require('express-session');
 
 const app = express();
 const http = require('http').Server(app);
-//var upload = multer({ dest: 'uploads/' });
+var upload = multer({ dest: 'uploads/' });
 
 app.locals.pretty = true;
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.static('public'));
+app.use(['/photo_info', '/photo'], express.static('uploads'));
 
 app.use(session({
     secret: '@#@$MYSIGN#@$#$',

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-
+	
 <%- include('../includes/head.ejs') %>
 <body>
 	<!-- WRAPPER -->
@@ -18,28 +18,30 @@
 						<div class="panel-body">
 							<div class="panel-body no-padding">
 								<!-- 여기서부터 -->
+								<% for(let i = 0; i < c_article.length; i++) { %>
 								<div class="col-lg-4 col-sm-6 portfolio-item">
 									<div class="hovereffect">
-										<img style="width: 100%; min-height: 200px; max-height: 200px" src="img/404ERR.png" alt="">
+										<img style="width: 100%; min-height: 200px; max-height: 200px" src="<%=c_article[i].savefolder%>/<%=c_article[i].savename%>" alt="">
 										<div class="overlay" align="center">
-											<a class="info" href="/photo_info">
+											<a class="info" href="/photo_info/<%= c_article[i].id %>">
 												<div>
 													<span>제목 : </span>
-													<span>fsdfsfsdfsd</span>
+													<span><%=c_article[i].title %></span>
 												</div>
 												<div>
 													<span>시간 : </span>
-													<span>sfsdfsdsfd</span>
+													<span><%= c_article[i].time %></span>
 												</div>
 												<div>
 													<span>조회수 : </span>
-													<span>sfsdfsdsfd</span>
+													<span><%= c_article[i].hit %></span>
 												</div>
 											</a>
 										</div>
 									</div>
 								</div>
-							<!-- 여기까지 -->
+								<% } %>
+								<!-- 여기까지 -->
 							
 							</div>
 						</div>
