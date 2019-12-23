@@ -9,44 +9,26 @@
 
   <script>
     $(() => {
-      let name = '<%= name %>';
+      let userid = '<%= userid %>';
       let classname = '<%= classname %>';
 
       const socket = io('/chat');
 
-      socket.emit('joinRoom', classname, name);
-
-      // $('select').change(() => {
-      //   socket.emit('leaveRoom', classname, name);
-
-      //   socket.emit('joinRoom', classname, name);
-      // });
-
+      socket.emit('joinRoom', classname, userid);
 
       $('#send').submit(() => {
-        socket.emit('chat message', classname, name, $('#m').val());
+        socket.emit('chat message', classname, userid, $('#m').val());
         $('#m').val('');
 
         return false;
       });
 
-      socket.on('chat message', (name, msg) => {
-        $('#messages').append($('<li>').text(name + '  :  ' +
+      socket.on('chat message', (userid, msg) => {
+        $('#messages').append($('<li>').text(userid + '  :  ' +
           msg));
         $('#messages').scrollTop(99999999);
       });
 
-      socket.on('leaveRoom', (classname, name) => {
-        $('#messages').append($('<li>').text(name + '    leaved ' +
-          classname + ' :('));
-        $('#messages').scrollTop(99999999);
-      });
-
-      socket.on('joinRoom', (classname, name) => {
-        $('#messages').append($('<li>').text(name + '    joined ' +
-          classname + ':)'));
-        $('#messages').scrollTop(99999999);
-      });
     });
   </script>
 <script>
@@ -83,7 +65,12 @@
           <div class="row" style="margin-top: 1%;">
             <div class="col-md-3"></div>
             <div class="panel panel-body col-md-6">
-              <ul id="messages"></ul>
+              <ul id="messages">
+                  
+                    <% for (let i = select_chat_result.length - 1; i > -1; i--) { %>
+                      <li><%= select_chat_result[i].writer_id %> : <%= select_chat_result[i].content %></li>
+                    <% } %>
+              </ul>
             </div>
             
           </div>

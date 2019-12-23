@@ -39,27 +39,28 @@
                                         <tr>
                                             <td>제목</td>
                                             <td colspan="5"><strong>
-                                                    숫자
-                                                    이름</strong></td>
+                                                <%=article.id%>.
+                                                <%=article.title%></strong></td>
                                         </tr>
                                         <tr>
                                             <td>작성자</td>
                                             <td>
-                                                관리자
+                                                <%=article.name%>
                                             </td>
                                             <td>조회수</td>
                                             <td>
-                                                hit
+                                                <%=article.hit%>
                                             </td>
                                             <td>작성일</td>
                                             <td>
-                                                day
+                                                <%=article.time%>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="6">
                                                 <br />
-                                               사진뛰울꺼임
+                                                <img style="width: 100%; min-height: 200px; max-height: 200px"
+                                                src="<%=article.savefolder%>/<%=article.savename%>" alt="">
                                                 <br />
                                             </td>
                                         </tr>
