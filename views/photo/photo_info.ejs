@@ -13,7 +13,7 @@
             <!-- MAIN CONTENT -->
             <div class="main-content">
                 <div class="container-fluid">
-                    <h2 class="display-4">글 보기</h2>
+                    <h2 class="display-4">사진 보기</h2>
                     <div align="right">
                         <button class="btn btn-info" onclick="location.href = '/photo';">목록</button>
                         <% if(user.userid == article.writer_id ) { %>
@@ -72,16 +72,11 @@
                             <div>
                                 <form method="post" action="comment/add?num=<%=article.id%>">
                                     <div class="input-group" style="width: 100%;" align="right">
-                                        <input id="comment" type="text" style="width: 800px;" name="comment"
-                                            class="form-control" placeholder="댓글을 입력하세요." maxlength=255>
+                                        <input id="comment_text" type="text" style="width: 800px;" name="comment"
+                                            class="form-control" placeholder="댓글을 입력하세요." maxlength=255 autocomplete="off" onkeyup="on_ck()">
                                         <span class="input-group-btn">
-                                            <% if(user.userid) { %>
-                                            <button id="comment" style="margin-left: 15px;" class="btn btn-secondary"
-                                                type="submit">등록</button>
-                                            <% } else { %>
-                                            <button id="comment" style="margin-left: 15px;" class="btn btn-secondary"
-                                                type="submit" disabled="disabled">등록</button>
-                                            <% } %>
+                                            <button id="comment_btn" style="margin-left: 15px;" class="btn btn-secondary"
+                                                type="submit" disabled>등록</button>
                                         </span>
                                     </div>
                                 </form>
@@ -140,6 +135,18 @@
     <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <script src="/vendor/chartist/js/chartist.min.js"></script>
     <script src="/scripts/klorofil-common.js"></script>
+
+    <script>
+        function on_ck(){
+        var text = document.getElementById("comment_text").value;
+        var button = document.getElementById("comment_btn");
+        if(!text)
+        button.setAttribute("disabled", "");
+        else
+        button.removeAttribute("disabled");
+        }
+    </script>
+    
     </div>
 </body>
 
