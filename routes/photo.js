@@ -105,6 +105,17 @@ router.get('/photo_info',(req, res)=>{
     where p.writer_id = u.id
     and p.id = ?
     `;
+    let select_comments = `
+    select c.id as id, u.name as writername, u.id as writerid, c.content as content, 
+    case
+    when date_format(c.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    then date_format(c.time, '%H:%i:%s')
+    else date_format(c.time, '%Y-%m-%d')
+    end as time
+    from photo_comments c, user u
+    where c.writer_id = u.id
+    and photo_id = ?
+    `;
     pool.getConnection((err, connection)=>{
         connection.query(hit_update,[num],(err)=>{
             if (err) {
@@ -118,7 +129,15 @@ router.get('/photo_info',(req, res)=>{
                     connection.release();
                     res.status(500).send('Internal Server Error!!!');
                 }
-                res.render('photo/photo_info', {article: results[0]});
+                connection.query(select_comments, num, (err, comment_lists) => {
+                    if (err) {
+                        console.log(err);
+                        connection.release();
+                        res.status(500).send('Internal Server Error!!!')
+                    }
+                    connection.release();
+                    res.render('photo/photo_info', { article: results[0], comment_lists: comment_lists });
+                });
             });
         });
     });   
@@ -170,8 +189,6 @@ router.get('/delete',(req,res)=>{
         delete from photo
         where id = ?
     `;
-
-    console.log(num);
     
     pool.getConnection((err, connection) => {
         connection.query(photo_data, num, (err, result) => {
@@ -180,7 +197,6 @@ router.get('/delete',(req,res)=>{
                 connection.release();
                 res.status(500).send('Internal Server Error!!!');
             }
-            console.log(result);
             connection.query(photo_delete, num, (err) => {
                 if (err) {
                     console.log(err);
@@ -200,7 +216,52 @@ router.get('/delete',(req,res)=>{
             });
         });
     });
-})
+});
+
+router.post('/comment/add', (req, res) => {
+    const sess = req.session;
+    let num = req.query.num;
+    let comment = req.body.comment;
+
+    let values = [num, sess.userid, comment];
+    let comments_insert = `
+        insert into photo_comments
+        (photo_id, writer_id, content)
+        values (?, ?, ?)
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(comments_insert, values, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }            
+            res.redirect('/photo/photo_info?num=' + num);
+            connection.release();
+        });
+    });
+});
+
+router.get('/comment/delete', (req, res) => {
+    let cnum = req.query.cnum;
+    let pnum = req.query.pnum
+
+    let comment_delete = `
+        delete from photo_comments
+        where id = ?
+    `;
+    pool.getConnection((err, connection) => {
+        connection.query(comment_delete, cnum, (err) => {
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.release();
+            res.redirect('/photo/photo_info?num=' + pnum);
+        });
+    });
+});
 
 
 module.exports = router;
