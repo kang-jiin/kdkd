@@ -1,16 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
-const multer = require('multer')
 const session = require('express-session');
 
 const app = express();
 const http = require('http').Server(app);
-//var upload = multer({ dest: 'uploads/' });
-
-app.locals.pretty = true;
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
 app.use(session({
     secret: '@#@$MYSIGN#@$#$',
@@ -222,11 +218,11 @@ port.open(() => {
 //               error page (무조건 맨밑!!)                  //
 //////////////////////////////////////////////////////////////
 
-// app.use(function (req, res, next) {
-//     throw new Error(req.url + ' not found');
-// });
+app.use(function (req, res, next) {
+    throw new Error(req.url + ' not found');
+});
 
-// app.use(function (err, req, res, next) {
-//     res.status(500);
-//     res.render('errpage');
-// });
+app.use(function (err, req, res, next) {
+    res.status(500);
+    res.render('errpage');
+});
