@@ -56,7 +56,39 @@ router.get('/',(req,res)=>{
     });
     
 })
-
+router.get('/photo_info',(req, res)=>{
+    let num = req.query.num;
+    
+    let hit_update = `
+    update photo
+    set hit= hit+1
+    where id=?
+    `;
+    let select_photo = `
+    select p.id as id, u.id as writer_id, u.name as name, p.title as title, p.savefolder, p.savename, 
+    date_format(p.time, '%Y-%m-%d') as time, p.hit as hit
+    from photo p, user u
+    where p.writer_id = u.id
+    and p.id = ?
+    `;
+    pool.getConnection((err, connection)=>{
+        connection.query(hit_update,[num],(err)=>{
+            if (err) {
+                console.log(err);
+                connection.release();
+                res.status(500).send('Internal Server Error!!!');
+            }
+            connection.query(select_photo, num,(err, results)=>{
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!');
+                }
+                res.render('photo/photo_info', {article: results[0]});
+            });
+        });
+    });   
+});
 
 
 

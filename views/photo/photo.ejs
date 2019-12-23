@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
-	
+
 <%- include('../includes/head.ejs') %>
+
 <body>
 	<!-- WRAPPER -->
 	<div id="wrapper">
@@ -13,7 +14,8 @@
 			<div class="main-content">
 				<div class="container-fluid">
 					<h3 class="page-title">포토</h3>
-					<div align="right"><a href="/photo/add"><button class="btn btn-primary" type="button">사진 올리기</button></a></div>
+					<div align="right"><a href="/photo/add"><button class="btn btn-primary" type="button">사진
+								올리기</button></a></div>
 					<div class="panel panel-headline" style="margin-top: 1%;">
 						<div class="panel-body">
 							<div class="panel-body no-padding">
@@ -21,9 +23,10 @@
 								<% for(let i = 0; i < c_article.length; i++) { %>
 								<div class="col-lg-4 col-sm-6 portfolio-item">
 									<div class="hovereffect">
-										<img style="width: 100%; min-height: 200px; max-height: 200px" src="<%=c_article[i].savefolder%>/<%=c_article[i].savename%>" alt="">
+										<img style="width: 100%; min-height: 200px; max-height: 200px"
+											src="<%=c_article[i].savefolder%>/<%=c_article[i].savename%>" alt="">
 										<div class="overlay" align="center">
-											<a class="info" href="/photo_info/<%= c_article[i].id %>">
+											<a class="info" href="photo_info?num=<%= c_article[i].id %>">
 												<div>
 													<span>제목 : </span>
 													<span><%=c_article[i].title %></span>
@@ -41,9 +44,27 @@
 									</div>
 								</div>
 								<% } %>
-								<!-- 여기까지 -->
-							
 							</div>
+							<!-- 여기까지 -->
+							<!-- pg -->
+							<div class="text-center">
+								<ul class="pagination text-center">
+									<%var cont = Math.ceil(current/10);%>
+									<%if(cont>1){%>
+									<a class="nextgroup" href="/photo?page=<%=(cont-2)*10+1%>">이전</a>
+									<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+									<a class="pagebtns" href="/photo?page=<%=i%>"><%= i%></a>
+									<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+									<a class="pagebtns" href="/photo?page=<%=i%>"><%= i%></a>
+									<%}%>
+										<a class="nextgroup" href="/photo?page=<%=cont*10+1%>">다음</a>
+									<%}%>
+									</ul>
+								</div>
+								<!-- pgend -->
+							
 						</div>
 					</div>
 				</div>
