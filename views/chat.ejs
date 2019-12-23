@@ -8,6 +8,9 @@
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 
   <script>
+    $(document).ready(function() {
+        $('#messages').scrollTop(99999999);
+    })
     $(() => {
       let userid = '<%= userid %>';
       let classname = '<%= classname %>';

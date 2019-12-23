@@ -84,7 +84,7 @@ app.get(['/', '/home'], (req, res) => {
     let userid = sess.userid;
 
     let select_environment = `
-    select date_format(time, '%H:%i') t, temperature, humidity, dust from environment
+    select date_format(time, '%H') t, temperature, humidity, dust from environment
     order by time desc
     limit 0,10
     `;
