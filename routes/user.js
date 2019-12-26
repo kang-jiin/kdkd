@@ -443,6 +443,11 @@ router.post('/mypage', (req, res) => {
     tel1=?, tel2=?, tel3=?, zip_code=?, address=?, detail_address=?
     where id=?
     `;
+    let user_check= `
+        select *
+        from user
+        where id = ?
+    `;
     pool.getConnection((err, connection) => {
         connection.query(user_update, values, (err, result) => {
             if (err) {
@@ -450,10 +455,18 @@ router.post('/mypage', (req, res) => {
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            sess.userid = id;
-            sess.name = name;
-            req.session.save(() => {
-                res.redirect('/');
+            connection.query(user_check, [id], (err, userresults, fields) => {
+                if (err) {
+                    console.log(err);
+                    connection.release();
+                    res.status(500).send('Internal Server Error!!!')
+                }
+                sess.userid = id;
+                sess.name = name;
+                sess.grade = userresults[0].grade;
+                req.session.save(() => {
+                    res.redirect('/');
+                });
             });
         });
     });
