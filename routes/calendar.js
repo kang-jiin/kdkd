@@ -16,22 +16,22 @@ const pool = mysql.createPool({
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
-    let select_birth =`
+    let birth_select =`
     select concat(name, " 생일") as content, date_format(birth, '%m') as month, date_format(birth, '%d') as day 
     from student
     `;
-    let select_cal = `
+    let cal_select = `
     select content, date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day, id 
     from calendar
     `;
     pool.getConnection((err, connection) =>{
-        connection.query(select_birth, (err, birth_results)=>{
+        connection.query(birth_select, (err, birth_results)=>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_cal, (err, cal_results)=>{
+            connection.query(cal_select, (err, cal_results)=>{
                 if (err) {
                     console.log(err);
                     connection.release();
@@ -93,13 +93,13 @@ router.post('/modify', (req, res)=>{
     let caldate = req.body.caldate;
     let content = req.body.content;
     let values = [caldate, content, id];
-    let update_modify =`
+    let modify_update =`
     update calendar 
     set time = ?, content = ?
     where id = ?
     `;
     pool.getConnection((err, connecction)=>{
-        connecction.query(update_modify, values, (err, result)=>{
+        connecction.query(modify_update, values, (err, result)=>{
             if (err) {
                 console.log(err);
                 connection.release();
@@ -113,13 +113,13 @@ router.post('/modify', (req, res)=>{
 router.get('/modify_delete',(req,res)=>{
     let id = req.query.id;
 
-    let delete_cal =` 
+    let cal_delete =` 
     delete from calendar
     where id = ?
     `;
 
     pool.getConnection((err, connecction) =>{
-        connecction.query(delete_cal, id, (err, result)=>{
+        connecction.query(cal_delete, id, (err, result)=>{
             if (err) {
                 console.log(err);
                 connection.release();

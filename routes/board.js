@@ -146,14 +146,14 @@ router.post('/write', (req, res) => {
 router.get('/modify', (req, res) => {
     let num = req.query.num;
 
-    let board_select = `
+    let select_board = `
         select * 
         from board
         where id = ?
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(board_select, num, (err, result) => {
+        connection.query(select_board, num, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
