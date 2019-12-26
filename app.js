@@ -25,6 +25,9 @@ app.use(function (req, res, next) {
     if(req.session.grade == 'N' && !(res.locals.menu == 'user' && submenu == 'user_student_add')) {
         return res.redirect('/user/user_student_add');
     }
+    if(req.session.grade == 'U' && !(res.locals.menu == 'user' && submenu == 'mypage')) {
+        return res.redirect('/user/mypage');
+    }
     next();
 });
 
@@ -94,7 +97,7 @@ app.get(['/', '/home'], (req, res) => {
     end as time, b.hit as hit
     from board b, user u
     where b.writer_id = u.id
-    order by b.time desc
+    order by b.id desc
     limit 0, 5
     `;
 
@@ -254,11 +257,11 @@ port.open(() => {
 //               error page (무조건 맨밑!!)                  //
 //////////////////////////////////////////////////////////////
 
-// app.use(function (req, res, next) {
-//     throw new Error(req.url + ' not found');
-// });
+app.use(function (req, res, next) {
+    throw new Error(req.url + ' not found');
+});
 
-// app.use(function (err, req, res, next) {
-//     res.status(500);
-//     res.render('errpage');
-// });
+app.use(function (err, req, res, next) {
+    res.status(500);
+    res.render('errpage');
+});

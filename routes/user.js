@@ -375,7 +375,7 @@ router.post('/pw', (req, res) => {
             if (results.length == 1) {
                 sess.userid = results[0].id;
                 sess.name = results[0].name;
-                sess.grade = results[0].grade;
+                sess.grade = 'U';
                 req.session.save(() => {
                     connection.release();
                     res.redirect('/user/mypage');
