@@ -158,22 +158,20 @@ app.get('/streamer', (req, res) => res.sendFile(path.resolve(__dirname, './views
 //////////////////////////////////////////////////////////////
 
 app.get('/chat', (req, res) => {
-    let userid = req.session.userid;
-    let name = req.session.name;
     let classname;
     if(req.query.class != undefined) classname = req.query.class;
     else classname = "전체";
 
     let chatlog_select = `
-        select * from chat
+        select c.id, c.writer_id ,c.class, c.content, u.id, u.name
+        from chat c, user u
         where class = ?
-        order by id desc
+        and c.writer_id = u.id
+        order by c.id desc
         limit 0, 50
     `;
 
-    
     pool.getConnection((err, connection) => {
-
         connection.query(chatlog_select, classname, (err, select_chat_result) => {
             if (err) {
                 connection.release();                
@@ -181,7 +179,7 @@ app.get('/chat', (req, res) => {
             }
             connection.release();
             
-            res.render('chat', {userid: userid, name: name, classname: classname, select_chat_result: select_chat_result});
+            res.render('chat', {classname: classname, select_chat_result: select_chat_result});
         })
     })
 
@@ -190,19 +188,19 @@ app.get('/chat', (req, res) => {
 
 const chat = io.of('chat')
 chat.on('connection', (socket) => {
-    socket.on('leaveRoom', (classname, name) => {
+    socket.on('leaveRoom', (classname, username) => {
         socket.leave(classname, () => {
-            chat.to(classname).emit('leaveRoom', classname, name);
+            chat.to(classname).emit('leaveRoom', classname, username);
         });
     });
 
-    socket.on('joinRoom', (classname, name) => {
+    socket.on('joinRoom', (classname, username) => {
         socket.join(classname, () => {
-            chat.to(classname).emit('joinRoom', classname, name);
+            chat.to(classname).emit('joinRoom', classname, username);
         });
     });
 
-    socket.on('chat message', (classname, userid, msg) => {
+    socket.on('chat message', (classname, userid, username, msg) => {
         let chatlog_insert = `
             insert into chat (writer_id, class, content)
             values (?, ?, ?)
@@ -216,7 +214,7 @@ chat.on('connection', (socket) => {
                     throw err;
                 }
                 connection.release();
-                chat.to(classname).emit('chat message', userid, msg);
+                chat.to(classname).emit('chat message', username, msg);
             })
         })
 
@@ -256,11 +254,11 @@ port.open(() => {
 //               error page (무조건 맨밑!!)                  //
 //////////////////////////////////////////////////////////////
 
-app.use(function (req, res, next) {
-    throw new Error(req.url + ' not found');
-});
+// app.use(function (req, res, next) {
+//     throw new Error(req.url + ' not found');
+// });
 
-app.use(function (err, req, res, next) {
-    res.status(500);
-    res.render('errpage');
-});
+// app.use(function (err, req, res, next) {
+//     res.status(500);
+//     res.render('errpage');
+// });
