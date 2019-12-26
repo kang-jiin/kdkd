@@ -29,14 +29,14 @@ router.post('/login', (req, res) => {
     let userid = req.body.username;
     let pass = req.body.password;
     let values = [userid, pass];
-    let login_query = `
+    let user_check = `
     select *
     from user
     where id=? and password=?;
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(login_query, values, (err, login_results) => {
+        connection.query(user_check, values, (err, login_results) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -92,13 +92,13 @@ passport.use(new NaverStrategy({
                 naver_id: profile.id
             };
 
-            let select_user = `
+            let user_select = `
                 select id
                 from user
                 where naver_id = ?
             `;
             pool.getConnection((err, connection) => {
-                connection.query(select_user, user.naver_id, (err, result) => {
+                connection.query(user_select, user.naver_id, (err, result) => {
                     if (err) {
                         console.log(err);
                         connection.release();
@@ -132,14 +132,14 @@ passport.use(new NaverStrategy({
 router.get('/naver/login', (req, res) => {
     const sess = req.session;
     let id = sess.userid;
-    let select_relation = `
+    let relation_select = `
         select *
         from relation
         where parents_id = ?
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(select_relation, id, (err, result) => {
+        connection.query(relation_select, id, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -183,13 +183,13 @@ passport.use(new KakaoStrategy({
                 kakao_id: profile.id
             };
 
-            let select_user = `
+            let user_select = `
                 select id
                 from user
                 where kakao_id = ?
             `;
             pool.getConnection((err, connection) => {
-                connection.query(select_user, user.kakao_id, (err, result) => {
+                connection.query(user_select, user.kakao_id, (err, result) => {
                     if (err) {
                         console.log(err);
                         connection.release();
@@ -221,14 +221,14 @@ passport.use(new KakaoStrategy({
 router.get('/kakao/login', (req, res) => {
     const sess = req.session;
     let id = sess.userid;
-    let select_relation = `
+    let relation_select = `
         select *
         from relation
         where parents_id = ?
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(select_relation, id, (err, result) => {
+        connection.query(relation_select, id, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -309,7 +309,7 @@ router.post('/signup', (req, res) => {
     insert into user (id, password, grade, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address)
     values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    let select_student = `
+    let student_select = `
     select * from student 
     where class = ? and
     name = ?
@@ -325,7 +325,7 @@ router.post('/signup', (req, res) => {
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_student, values_relation, (err, result) => {
+            connection.query(student_select, values_relation, (err, result) => {
                 if (err) {
                     console.log(err);
                     connection.release();
@@ -359,13 +359,13 @@ router.post('/pw', (req, res) => {
     let emaildomain = req.body.emaildomain;
 
     let values = [name, emailid, emaildomain];
-    let find_idpw_query = `
+    let find_idpw_check = `
     select *
     from user
     where name=? and emailid=? and emaildomain=?;
     `;
     pool.getConnection((err, connection) => {
-        connection.query(find_idpw_query, values, (err, results) => {
+        connection.query(find_idpw_check, values, (err, results) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -390,25 +390,25 @@ router.post('/pw', (req, res) => {
 
 router.get('/mypage', (req, res) => {
     let userid = req.session.userid;
-    let user_data_query = `
+    let user_check= `
         select *
         from user
         where id = ?
     `;
-    let student_data_query = `
+    let student_check = `
         select id, name, class, date_format(birth, '%Y-%m-%d') as birth
         from relation, student
         where relation.parents_id = ? and
         relation.student_id = student.id
     `
     pool.getConnection((err, connection) => {
-        connection.query(user_data_query, [userid], (err, userresults, fields) => {
+        connection.query(user_check, [userid], (err, userresults, fields) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(student_data_query, [userid], (err, studentresults, fields) => {
+            connection.query(student_check, [userid], (err, studentresults, fields) => {
                 if (err) {
                     console.log(err);
                     connection.release();
@@ -437,14 +437,14 @@ router.post('/mypage', (req, res) => {
     let detail_address = req.body.addr3;
 
     let values = [password, name, emailid, emaildomain, tel1, tel2, tel3, zip_code, address, detail_address, id];
-    let users_update = `
+    let user_update = `
     update user set
     password=?, name=?, emailid=?, emaildomain=?, 
     tel1=?, tel2=?, tel3=?, zip_code=?, address=?, detail_address=?
     where id=?
     `;
     pool.getConnection((err, connection) => {
-        connection.query(users_update, values, (err, result) => {
+        connection.query(user_update, values, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -460,13 +460,13 @@ router.post('/mypage', (req, res) => {
 });
 
 router.get('/user_student_add', (req, res) => {
-    let get_id = `
+    let id_select = `
         select id
         from user
     `;
     let ids = new Array();
     pool.getConnection((err, connection) => {
-        connection.query(get_id, (err, results, fields) => {
+        connection.query(id_select, (err, results, fields) => {
             if (err) {
                 console.log(err);
                 connection.release();
@@ -493,7 +493,7 @@ router.post('/user_student_add', (req, res) => {
     let name = req.body.name;
     let values = [classname, name];
 
-    let select_student = `
+    let student_select = `
     select * from student 
     where class = ? and
     name = ?
@@ -509,7 +509,7 @@ router.post('/user_student_add', (req, res) => {
     `;
 
     pool.getConnection((err, connection) => {
-        connection.query(select_student, values, (err, result) => {
+        connection.query(student_select, values, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();

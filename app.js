@@ -80,12 +80,12 @@ app.get(['/', '/home'], (req, res) => {
     const sess = req.session;
     let userid = sess.userid;
 
-    let select_environment = `
+    let environment_select = `
     select date_format(time, '%H') t, temperature, humidity, dust from environment
     order by time desc
     limit 0,10
     `;
-    let select_board = `
+    let board_select = `
     select b.id as id, u.name as name, b.title as title, b.content as content, 
     case
     when date_format(b.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
@@ -97,7 +97,8 @@ app.get(['/', '/home'], (req, res) => {
     order by b.time desc
     limit 0, 5
     `;
-    let inout_query = `
+
+    let inout_select = `
     select s.id as id, s.name as name, io.in_out_flag, t.time
     from 
     relation r inner join student s on r.student_id = s.id
@@ -112,19 +113,19 @@ app.get(['/', '/home'], (req, res) => {
     `;
     
     pool.getConnection((err, connection) => {
-        connection.query(select_environment, (err, environment_results) => {
+        connection.query(environment_select, (err, environment_results) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_board, (err, board_results) => {
+            connection.query(board_select, (err, board_results) => {
                 if (err) {
                     console.log(err);
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
-                connection.query(inout_query, userid, (err, inout_results) => {
+                connection.query(inout_select, userid, (err, inout_results) => {
                     if (err) {
                         console.log(err);
                         connection.release();
@@ -163,7 +164,7 @@ app.get('/chat', (req, res) => {
     if(req.query.class != undefined) classname = req.query.class;
     else classname = "전체";
 
-    let select_chat_log = `
+    let chatlog_select = `
         select * from chat
         where class = ?
         order by id desc
@@ -173,7 +174,7 @@ app.get('/chat', (req, res) => {
     
     pool.getConnection((err, connection) => {
 
-        connection.query(select_chat_log, classname, (err, select_chat_result) => {
+        connection.query(chatlog_select, classname, (err, select_chat_result) => {
             if (err) {
                 connection.release();                
                 throw err;
@@ -202,14 +203,14 @@ chat.on('connection', (socket) => {
     });
 
     socket.on('chat message', (classname, userid, msg) => {
-        let insert_chat_log = `
+        let chatlog_insert = `
             insert into chat (writer_id, class, content)
             values (?, ?, ?)
         `;       
 
         pool.getConnection((err, connection) => {
 
-            connection.query(insert_chat_log, [userid, classname, msg], (err) => {
+            connection.query(chatlog_insert, [userid, classname, msg], (err) => {
                 if (err) {
                     connection.release();                
                     throw err;

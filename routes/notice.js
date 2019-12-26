@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
     if(req.query.class != undefined) classname = req.query.class;
     else classname = "햇님반";
 
-    let select_notice = `
+    let notice_select = `
     select n.id as id, u.id as writer_id, u.name as name, n.title as title, n.content as content, 
     case
     when date_format(n.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
@@ -38,20 +38,20 @@ router.get('/', (req, res) => {
     LIMIT ?, ?
     `;
 
-    let select_count =`
+    let count_select =`
     select count(*) as num
     from notice
     where class = ?
     `;
     
     pool.getConnection((err, connection) => {
-        connection.query(select_notice, [classname, (page * 5) - 5, 5], (err, results) => {
+        connection.query(notice_select, [classname, (page * 5) - 5, 5], (err, results) => {
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_count, [classname], (err, countes) =>{
+            connection.query(count_select, [classname], (err, countes) =>{
                 if (err) {
                     console.log(err);
                     connection.release();

@@ -52,7 +52,7 @@ router.get('/', (req, res) => {
         `;
     }
 
-    let select_cal =`
+    let cal_select =`
     select date_format(time, '%Y') as year, date_format(time, '%m') as month, date_format(time, '%d') as day,
     concat(s.name, " ", date_format(time, '%H:%i'), " ", case when io.in_out_flag = 'in' then "등원" else "하원" end) as content, io.in_out_flag
     from relation r, student s,
@@ -86,7 +86,7 @@ router.get('/', (req, res) => {
                     connection.release();
                     res.status(500).send('Internal Server Error!!!')
                 }
-                connection.query(select_cal, id, (err, calresults) => {
+                connection.query(cal_select, id, (err, calresults) => {
                     if (err) {
                         console.log(err);
                         connection.release();

@@ -53,7 +53,7 @@ router.get('/',(req,res)=>{
     if(req.query.page != undefined) page = req.query.page;
     else page= 1;
 
-    let select_photo = `
+    let photo_select = `
     select p.id as id, u.name as name, p.title as title, p.savefolder, p.savename,
     case
     when date_format(p.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
@@ -66,18 +66,18 @@ router.get('/',(req,res)=>{
     LIMIT ?,?
     `;
 
-    let select_count =`
+    let count_select =`
     select count(*) as num
     from photo
     `;
     pool.getConnection((err, connection)=>{
-        connection.query(select_photo,[(page*9)-9, 9], (err, c_results)=>{
+        connection.query(photo_select,[(page*9)-9, 9], (err, c_results)=>{
             if (err) {
                 console.log(err);
                 connection.release();
                 res.status(500).send('Internal Server Error!!!')
             }
-            connection.query(select_count, (err, countes) =>{
+            connection.query(count_select, (err, countes) =>{
                 if (err) {
                     console.log(err);
                     connection.release();
@@ -98,14 +98,14 @@ router.get('/photo_info',(req, res)=>{
     set hit= hit+1
     where id=?
     `;
-    let select_photo = `
+    let photo_select = `
     select p.id as id, u.id as writer_id, u.name as name, p.title as title, p.savefolder, p.savename, 
     date_format(p.time, '%Y-%m-%d') as time, p.hit as hit
     from photo p, user u
     where p.writer_id = u.id
     and p.id = ?
     `;
-    let select_comments = `
+    let comments_select = `
     select c.id as id, u.name as writername, u.id as writerid, c.content as content, 
     case
     when date_format(c.time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
@@ -123,13 +123,13 @@ router.get('/photo_info',(req, res)=>{
                 connection.release();
                 res.status(500).send('Internal Server Error!!!');
             }
-            connection.query(select_photo, num,(err, results)=>{
+            connection.query(photo_select, num,(err, results)=>{
                 if (err) {
                     console.log(err);
                     connection.release();
                     res.status(500).send('Internal Server Error!!!');
                 }
-                connection.query(select_comments, num, (err, comment_lists) => {
+                connection.query(comments_select, num, (err, comment_lists) => {
                     if (err) {
                         console.log(err);
                         connection.release();
@@ -180,7 +180,7 @@ router.get('/modify',(req,res)=>{
 router.get('/delete',(req,res)=>{
     let num = req.query.num;
     
-    let photo_data = `
+    let photo_check = `
         select *
         from photo
         where id = ?
@@ -191,7 +191,7 @@ router.get('/delete',(req,res)=>{
     `;
     
     pool.getConnection((err, connection) => {
-        connection.query(photo_data, num, (err, result) => {
+        connection.query(photo_check, num, (err, result) => {
             if (err) {
                 console.log(err);
                 connection.release();
