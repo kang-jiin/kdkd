@@ -14,6 +14,9 @@
 							<div class="header">
 								<div class="logo text-center"><img src="/img/logo-dark.png" alt="Klorofil Logo"></div>
 							</div>
+							<% if(pass == false) { %>
+							<p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
+							<% } %>
 							<form method="POST" class="form-auth-small" action="/user/login">
 								<div class="form-group">
 									<label for="signin-email" class="control-label sr-only">ID</label>
