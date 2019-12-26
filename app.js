@@ -16,9 +16,6 @@ app.use(session({
 }));
 
 app.use(function (req, res, next) {
-    req.session.userid = 'admin';
-    req.session.name = '관리자';
-    req.session.grade = 'A';
     res.locals.user = req.session;
     res.locals.menu = req.url.split('/')[1];
     let submenu = req.url.split('/')[2];
