@@ -108,6 +108,7 @@ app.get(['/', '/home'], (req, res) => {
     left outer join (select student_id, max(time) as time
     from in_out
     where date_format(time, '%Y-%m-%d')=date_format(now(), '%Y-%m-%d')
+    and code = 'main'
     group by student_id
     ) t
     on s.id = t.student_id
