@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+  <!-- WRAPPER -->
+  <div id="wrapper">
+    <%- include('../includes/navbar.ejs') %>
+    <%- include('../includes/sidebar.ejs') %>
+    <!-- MAIN -->
+    <div class="main">
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <h3 class="page-title">학생 정보 수정</h3>
+          <div id="toastr-demo" class="panel" style="margin-left: 20%; margin-right: 20%;">
+            <form id="studentaddform" method="post" action="/admin/student_modify?num=<%=student.id%>">
+              <div class="panel-body">
+                <div align="left" class="form-group custom-control-inline">
+                  <label for="cln">학생반</label>
+                  <div id="cln" class="custom-control-inline">
+                    <select class="form-control" id="classname" name="classname">
+                      <option value="햇님반" <% if(student.class == "햇님반") { %> selected <% } %>>햇님반</option>
+                      <option value="별님반" <% if(student.class == "별님반") { %> selected <% } %>>별님반</option>
+                      <option value="달님반" <% if(student.class == "달님반") { %> selected <% } %>>달님반</option>
+                      <option value="꽃님반" <% if(student.class == "꽃님반") { %> selected <% } %>>꽃님반</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">학생이름</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25"
+                    value='<%=student.name%>'>
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">생일</label>
+                  <input id="birth" name="birth" type="date" value='<%=student.birth%>'>
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">출입코드</label>
+                  <input type="text" class="form-control" id="rfid" name="rfid" placeholder="" size=" 25"
+                    value='<%=student.rfid_key%>'>
+                </div>
+
+                <div class="form-group" align="center">
+                  <button type="submit" class="btn btn-primary" id="registerBtn">저장</button>
+                  <button type="button" class="btn btn-dark"
+                    onclick="location.href='/admin/student_delete?num=<%=student.id%>';">삭제</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- END MAIN CONTENT -->
+    </div>
+    <!-- END MAIN -->
+  </div>
+  
+  <script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">학생 관리</h3>
+					<div align="right" style="margin-right: 3%;"><a href="/admin/student_add"><button class="btn btn-primary" type="button">학생 등록</button></a></div>
+					<div class="row" style="margin-top: 1%;">
+						<div>
+							<!-- TABLE HOVER -->
+							<div class="panel panel-headline col-sm-5" style="overflow:auto; height:300px; padding:10px; margin-left: 70px;">
+								<div class="panel-heading">
+									<h3 class="panel-title">햇님반</h3>
+								</div>
+								<div class="panel-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>이름</th>
+												<th>생일</th>
+												<th>RFID KEY</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% student1.forEach(function(student){ %>
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
+												<td><%=student.id%></td>
+												<td><%=student.name%></a></td>
+												<td><%=student.birth%></td>
+												<td><%=student.rfid_key%></td>
+											</tr>
+											<% }); %>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END TABLE HOVER -->
+						</div>
+						<div class="col-sm-1">
+						</div>
+						<div>
+							<!-- TABLE HOVER -->
+							<div class="panel panel-headline col-sm-5" style="overflow:auto; height:300px; padding:10px;">
+								<div class="panel-heading">
+									<h3 class="panel-title">별님반</h3>
+								</div>
+								<div class="panel-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>이름</th>
+												<th>생일</th>
+												<th>RFID KEY</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% student2.forEach(function(student){ %>
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
+												<td><%=student.id%></td>
+												<td><%=student.name%></a></td>
+												<td><%=student.birth%></td>
+												<td><%=student.rfid_key%></td>
+											</tr>
+											<% }); %>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END TABLE HOVER -->
+						</div>
+					</div>
+					<div class="row">
+						<div>
+							<!-- TABLE HOVER -->
+							<div class="panel panel-headline col-sm-5" style="overflow:auto; height:300px; padding:10px; margin-left: 70px;">
+								<div class="panel-heading">
+									<h3 class="panel-title">달님반</h3>
+								</div>
+								<div class="panel-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>이름</th>
+												<th>생일</th>
+												<th>RFID KEY</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% student3.forEach(function(student){ %>
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
+												<td><%=student.id%></td>
+												<td><%=student.name%></a></td>
+												<td><%=student.birth%></td>
+												<td><%=student.rfid_key%></td>
+											</tr>
+											<% }); %>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END TABLE HOVER -->
+						</div>
+						<div class="col-sm-1">
+						</div>
+						<div>
+							<!-- TABLE HOVER -->
+							<div class="panel panel-headline col-sm-5" style="overflow:auto; height:300px; padding:10px;">
+								<div class="panel-heading">
+									<h3 class="panel-title">꽃님반</h3>
+								</div>
+								<div class="panel-body">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>이름</th>
+												<th>생일</th>
+												<th>RFID KEY</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% student4.forEach(function(student){ %>
+											<tr onclick="location.href = '/admin/student_modify?num=<%=student.id%>';">
+												<td><%=student.id%></td>
+												<td><%=student.name%></a></td>
+												<td><%=student.birth%></td>
+												<td><%=student.rfid_key%></td>
+											</tr>
+											<% }); %>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<!-- END TABLE HOVER -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+		<!-- END MAIN -->
+	</div>
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+</body>
+
+</html>

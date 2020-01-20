@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('./includes/head.ejs') %>
+
+<body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+  <script>
+    $(document).ready(function() {
+        $('#messages').scrollTop(99999999);
+    })
+    $(() => {
+      let userid = '<%= user.userid %>';
+      let username = '<%= user.name %>';
+      let classname = '<%= classname %>';
+
+      const socket = io('/chat');
+
+      socket.emit('joinRoom', classname, userid);
+
+      $('#send').submit(() => {
+        socket.emit('chat message', classname, userid, username, $('#m').val());
+        $('#m').val('');
+
+        return false;
+      });
+
+      socket.on('chat message', (username, msg) => {
+        $('#messages').append($('<li>').text(username + '  :  ' +
+          msg));
+        $('#messages').scrollTop(99999999);
+      });
+
+    });
+  </script>
+  <script>
+    function on_ck() {
+      var text = document.getElementById("m").value;
+      var button = document.getElementById("SMS");
+      if (!text)
+        button.setAttribute("disabled", "");
+      else
+        button.removeAttribute("disabled");
+    }
+  </script>
+  
+  <!-- WRAPPER -->
+  <div id="wrapper">
+    <%- include('./includes/navbar.ejs') %>
+    <%- include('./includes/sidebar.ejs') %>
+    <!-- MAIN -->
+    <div class="main">
+      <div class="main-content">
+        <div class="container-fluid">
+          <h3 class="page-title">채팅 (<%=classname%>)</h3>
+          <div class="select-box select-script">
+            <label for="selectbox">반선택</label>
+            <select id="selectbox" name="classname" onchange="if(this.value) location.href='/chat?class='+this.value;"
+              title="선택해 주세요">
+              <option value="전체" <% if(classname == "전체") { %> selected <% } %>>전체</option>
+              <option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
+              <option value="별님반" <% if(classname == "별님반") { %> selected <% } %>>별님반</option>
+              <option value="달님반" <% if(classname == "달님반") { %> selected <% } %>>달님반</option>
+              <option value="꽃님반" <% if(classname == "꽃님반") { %> selected <% } %>>꽃님반</option>
+            </select>
+          </div>
+          <div class="row" style="margin-top: 1%;">
+            <div class="col-md-3"></div>
+            <div class="panel panel-body col-md-6">
+              <ul id="messages">
+
+                <% for (let i = select_chat_result.length - 1; i > -1; i--) { %>
+                <li><%= select_chat_result[i].name %> : <%= select_chat_result[i].content %></li>
+                <% } %>
+              </ul>
+            </div>
+
+          </div>
+          <div class="kb">
+            <form action="" id="send">
+              <input type="textarea" id="m" autocomplete="off" class="inin" onkeyup="on_ck()" />
+              <button class="btn" id="SMS" disabled>보내기</button>
+            </form>
+          </div>
+          <div class="col-md-3"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+  <script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+  <script src="/vendor/chartist/js/chartist.min.js"></script>
+  <script src="/scripts/klorofil-common.js"></script>
+</body>
+
+</html>

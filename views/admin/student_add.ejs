@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+  <script>
+    $(() => {
+      let classname = 'rfid';
+
+      const socket = io('/chat');
+
+      socket.emit('joinRoom', classname, name);
+      
+      socket.on('rfid_data', (data) => {
+        $('#rfid').val(data);
+      });
+    });
+  </script>
+  <!-- WRAPPER -->
+  <div id="wrapper">
+    <%- include('../includes/navbar.ejs') %>
+    <%- include('../includes/sidebar.ejs') %>
+    <!-- MAIN -->
+    <div class="main">
+      <!-- MAIN CONTENT -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <h3 class="page-title">학생 추가</h3>
+          <div id="toastr-demo" class="panel" style="margin-left: 20%; margin-right: 20%;">
+            <form id="studentaddform" method="post" action="/admin/student_add">
+              <div class="panel-body">
+                <div align="left" class="form-group custom-control-inline">
+                  <label for="cln">학생반</label>
+                  <div id="cln" class="custom-control-inline">
+                    <select class="form-control" id="classname" name="classname">
+                      <option value="햇님반">햇님반</option>
+                      <option value="별님반">별님반</option>
+                      <option value="달님반">달님반</option>
+                      <option value="꽃님반">꽃님반</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">학생이름</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="" size=" 25">
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">생일</label>
+                  <input id="birth" name="birth" type="date">
+                </div>
+
+                <div class="form-group" align="left">
+                  <label for="cln">출입코드</label>
+                  <input type="text" class="form-control" id="rfid" name="rfid" placeholder="" size=" 25">
+                </div>
+                <div class="form-group" align="center">
+                  <button type="submit" class="btn btn-primary" id="registerBtn">저장</button>
+                  <button type="reset" class="btn btn-warning">초기화</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- END MAIN CONTENT -->
+    </div>
+    <!-- END MAIN -->
+  </div>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+</body>
+
+</html>

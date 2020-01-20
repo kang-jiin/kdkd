@@ -1,0 +1,152 @@
+<html>
+
+<head>
+    <%- include('../includes/head.ejs') %>
+    <script>
+        var idcheck = false;
+        window.onload = function () {
+            document.getElementById('id').onkeyup = function () {
+                var ids = new Array();
+                <% ids.forEach((id) => { %>
+                    ids.push("<%= id%>");
+                <% }) %>
+                var length = <%= ids.length%>;
+                var text = document.getElementById('id').value;
+                var tl = text.length;
+                var s = document.getElementById('idmsg');
+                s.setAttribute('color', 'red');
+                var msg;
+                if (tl < 4 || tl > 20) {
+                    idcheck = false;
+                    msg = '**4~20자의 아이디를 사용하십시오**';
+                }
+                else {
+                    msg = '**사용 가능한 아이디입니다.**';
+                    idcheck = true;
+                    for (var i = 0; i < length; i++)
+                        if (ids[i] == text) {
+                            idcheck = false;
+                            msg = '**이미 사용중인 아이디입니다**'; break;
+                        }
+                }
+                document.getElementById('idmsg').innerHTML = msg;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container" align="center" style="margin-top: 70px; margin-bottom: 50px;">
+        <dir class="col-lg-3">
+        </dir>
+        <div class="col-lg-6  border border-dark rounded" align="center" style="padding: 40px;">
+            <div class="panel panel-headline" style="margin-top: 1%;">
+                <div class="panel-body">
+                    <div class="panel-body no-padding">
+                        <h2>회원가입</h2>
+                        <p><%=msg%></p>
+                        <form id="signupform" method="post" action="/user/signup">
+                            <div class="form-group" align="left">
+                                <label for="name">이름</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="">
+                            </div>
+                            <!-- ID중복검사, 비밀번호 확인 추가 -->
+                            <div class="form-group" align="left">
+                                <label for="">아이디</label>
+                                <input type="text" class="form-control" id="id" name="id"
+                                    onkeyup="javascript:idcheck();" placeholder="">
+                                <span id="idmsg" class="msg"></span>
+
+                                <div id="resultview"></div>
+                            </div>
+                            <div class="form-group" align="left">
+                                <label for="">비밀번호</label>
+                                <input type="password" class="form-control" id="pwd1" name="pass" placeholder="">
+                            </div>
+                            <div class="form-group" align="left">
+                                <label for="">비밀번호재입력</label>
+                                <input type="password" class="form-control" id="pwd2" name="passcheck" placeholder="">
+                            </div>
+                            <div class="alert alert-success" id="alert-success">비밀번호가 일치합니다.</div>
+                            <div class="alert alert-danger" id="alert-danger">비밀번호가 일치하지 않습니다.</div>
+                            <div class="form-group" align="left">
+                                <label for="email">이메일</label><br>
+                                <div id="email" class="custom-control-inline">
+                                    <input type="text" class="form-control" id="emailid" name="emailid" placeholder=""
+                                        size="25"> @
+                                    <select class="form-control" id="emaildomain" name="emaildomain">
+                                        <option value="naver.com">naver.com</option>
+                                        <option value="google.com">google.com</option>
+                                        <option value="daum.net">daum.net</option>
+                                        <option value="nate.com">nate.com</option>
+                                        <option value="hanmail.net">hanmail.net</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" align="left">
+                                <label for="tel">전화번호</label>
+                                <div id="tel" class="custom-control-inline">
+                                    <select class="form-control" id="tel1" name="tel1">
+                                        <option value="010">010</option>
+                                        <option value="02">02</option>
+                                        <option value="031">031</option>
+                                        <option value="032">032</option>
+                                        <option value="041">041</option>
+                                        <option value="051">051</option>
+                                        <option value="061">061</option>
+                                    </select> _
+                                    <input type="text" class="form-control" id="tel2" name="tel2"
+                                        onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' maxlength=4> _
+                                    <input type="text" class="form-control" id="tel3" name="tel3"
+                                        onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' maxlength=4>
+                                </div>
+                            </div>
+                            <div class="form-group" align="left">
+                                <label for="">주소</label><br>
+                                <input class="form-control" style="width: 40%; display: inline;" placeholder="우편번호"
+                                    name="addr1" id="addr1" type="text" readonly="readonly">
+                                <button type="button" class="btn btn-warning" onclick="execPostCode();"><i
+                                        class="fa fa-search"></i> 우편번호 찾기</button>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" style="top: 5px;" placeholder="도로명 주소" name="addr2"
+                                    id="addr2" type="text" readonly="readonly" />
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="상세주소" name="addr3" id="addr3" type="text" />
+                            </div>
+                            <div align="left" class="form-group custom-control-inline">
+                                <label for="cln">학생반</label>
+                                <div id="cln" class="custom-control-inline">
+                                    <select class="form-control" id="cln1" name="cln1">
+                                        <option value="햇님반">햇님반</option>
+                                        <option value="별님반">별님반</option>
+                                        <option value="달님반">달님반</option>
+                                        <option value="꽃님반">꽃님반</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="cln">학생이름</label>
+                                    <input type="text" class="form-control" id="cln2" name="cln2" placeholder=""
+                                        size="25">
+                                </div>
+                            </div>
+                            <div class="form-group" align="center">
+                                <button type="submit" class="btn btn-primary" id="registerBtn">회원가입</button>
+                                <button type="reset" class="btn btn-warning">초기화</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/signup.js"></script>
+    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+    <script src="/js/addressapi.js"></script>
+</body>
+
+</html>

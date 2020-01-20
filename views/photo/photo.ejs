@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">포토</h3>
+					<div align="right">
+						<a href="/photo/add"><button class="btn btn-primary" type="button">사진 올리기</button></a>
+					</div>
+					<div class="panel panel-headline" style="margin-top: 1%;">
+						<div class="panel-body">
+							<div class="panel-body no-padding">
+								<!-- 여기서부터 -->
+								<% for(let i = 0; i < c_article.length; i++) { %>
+								<div class="col-lg-4 col-sm-6 portfolio-item">
+									<div class="hovereffect" style="margin-top: 15%;">
+										<a class="info" href="/photo/photo_info?num=<%= c_article[i].id %>">
+											<img style="width: 100%; min-height: 300px; max-height: 100px"
+												src="<%=c_article[i].savefolder%>/<%=c_article[i].savename%>" alt="">
+											<div class="overlay" align="center">
+												<div>
+													<span>제목 : </span>
+													<span><%=c_article[i].title %></span>
+												</div>
+												<div>
+													<span>시간 : </span>
+													<span><%= c_article[i].time %></span>
+												</div>
+												<div>
+													<span>조회수 : </span>
+													<span><%= c_article[i].hit %></span>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+								<% } %>
+							</div>
+							<!-- 여기까지 -->
+							<!-- pg -->
+							<div class="text-center">
+								<ul class="pagination text-center">
+									<%var cont = Math.ceil(current/10);%>
+									<%if(cont>1){%>
+									<a class="nextgroup" href="/photo?page=<%=(cont-2)*10+1%>">이전</a>
+									<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+									<a class="pagebtns" href="/photo?page=<%=i%>"><%= i%></a>
+									<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+									<a class="pagebtns" href="/photo?page=<%=i%>"><%= i%></a>
+									<%}%>
+										<a class="nextgroup" href="/photo?page=<%=cont*10+1%>">다음</a>
+									<%}%>
+								</ul>
+							</div>
+							<!-- pgend -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+	</div>
+	<!-- END MAIN -->
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/chartist/js/chartist.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+
+</body>
+
+</html>

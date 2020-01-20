@@ -173,7 +173,7 @@ html.fullscreen-bg #wrapper {
     background-color: #f8f8f8; }
   .navbar-default .brand {
     float: left;
-    padding: 30px 39px;
+    padding: 25px 40px;
     background-color: #fff; }
   @media screen and (max-width: 1024px) {
     .navbar-default .brand {
@@ -284,7 +284,7 @@ html.fullscreen-bg #wrapper {
       display: table-cell;
       width: 1%;
       position: inherit;
-      text-align: center; }
+      text-align: right; }
     .navbar-nav > li > a {
       padding: 15px 20px; }
       .navbar-nav > li > a span:not(.badge),
@@ -424,6 +424,11 @@ ul.notifications > li {
         .sidebar .nav .nav > li > a.active a {
           color: #fff; }
 
+/* 여기 알림장 selectbox */
+.select-script{position:relative; width:160px; height:40px; line-height:40px; border:1px solid #606976; border-radius:4px; text-transform:uppercase; background:#fff;}
+	.select-script label{position:absolute; width:120%; font-size:.86em; color:#606976; top:0; left:0; padding:0 5%;}
+	.select-script label:after{content:'▼'; width:40px; height:38px; position:absolute; top:0; right:0; font-size:.76em; color:#fff; text-align:center; background:#606976;}
+	.select-script select{width:100%; height:40px; opacity:0; filter:alpha(opacity=0); -ms-filter:alpha(opacity=0)/* IE 8 */;}
 /********************
  * TYPOGRAPHY
  ********************/
@@ -1019,7 +1024,7 @@ ul.activity-list > li {
     width: 58%;
     height: 100%;
     position: relative;
-    background-image: url("../../assets/img/login-bg.jpg");
+    background-image: url("/img/login-bg.jpg");
     background-repeat: no-repeat;
     background-size: cover; }
     .auth-box .right:before {

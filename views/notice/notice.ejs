@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+<script>
+		$(document).ready(function () {
+
+			var select = $('.select-script select');
+			select.change(function () {
+				var select_name = $(this).children('option:selected').text();
+				$(this).siblings("label").text(select_name);
+			});
+
+		});
+</script>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">알림장 (<%=classname%>)</h3>
+					<div class="select-box select-script">
+						<label for="selectbox">반 선택해 주세요</label>
+						<select id="selectbox" name="classname" 
+						onchange="if(this.value) location.href='/notice?class='+this.value;" title="선택해 주세요">
+							<option value="햇님반" <% if(classname == "햇님반") { %> selected <% } %>>햇님반</option>
+							<option value="별님반" <% if(classname == "별님반") { %> selected <% } %>>별님반</option>
+							<option value="달님반" <% if(classname == "달님반") { %> selected <% } %>>달님반</option>
+							<option value="꽃님반" <% if(classname == "꽃님반") { %> selected <% } %>>꽃님반</option>
+						</select>
+					</div>
+					<div class="panel panel-headline" style="margin-top: 1%;">
+						<div class="panel-body">
+							<div class="panel-body no-padding">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th class="text-center col-sm-2">NO.</th>
+											<th class="text-center col-sm-2">날짜</th>
+											<th class="text-center col-sm-6">제목</th>
+											<th class="text-center col-sm-2">작성자</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% articles.forEach(function(article){ %>
+										<tr>
+											<td class="text-center"><%=article.id%></td>
+											<td class="text-center"><%=article.time%></a></td>
+											<td class="text-left"><%=article.title%></td>
+											<td class="text-center"><%=article.name%></td>
+										</tr>
+										<tr style="padding: 50px;">
+											<td class="text-left" colspan="4" style="padding: 50px;">
+												<%-article.content.replace(/\n/g, '<br/>')%>
+											</td>
+										</tr>
+										<% if(user.userid == article.writer_id ) { %>
+										<tr>
+											<td class="text-right" colspan="4">
+												<button class="btn btn-dark"
+													onclick="location.href = '/notice/modify?num=<%=article.id%>';">수정</button>
+												<button class="btn btn-dark"
+													onclick="location.href = '/notice/delete?num=<%=article.id%>';">삭제</button>
+											</td>
+										</tr>
+										<% }%>
+										<% }); %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="text-center">
+							<ul class="pagination text-center">
+								<%var cont = Math.ceil(current/10);%>
+								<%if(cont>1){%>
+									<a class="nextgroup" href="/notice?page=<%=(cont-2)*10+1%>">이전</a>
+								<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+										<a class="pagebtns" href="/notice?page=<%=i%>"><%= i%></a>
+								<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+										<a class="pagebtns" href="/notice?page=<%=i%>"><%= i%></a>
+									<%}%>
+								<a class="nextgroup" href="/notice?page=<%=cont*10+1%>">다음</a>
+								<%}%>
+							</ul>
+						</div>
+					</div>
+					<div align="right">
+						<% if(user.grade == 'A') { %>
+						<a href="/notice/write"><button class="btn btn-primary">글쓰기</button></a>
+						<% } %>
+					</div>
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+		<!-- END MAIN -->
+	</div>
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+</body>
+
+</html>

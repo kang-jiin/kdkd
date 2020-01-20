@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <%- include('../includes/navbar.ejs') %>
+        <%- include('../includes/sidebar.ejs') %>
+        <!-- MAIN -->
+        <div class="main">
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <div class="container-fluid">
+                    <h3 class="page-title">일정 수정</h3>
+                    <div id="toastr-demo" class="panel" style="margin-left: 20%; margin-right: 20%;">
+                        <form id="studentaddform" method="post" action="/calendar/modify?id=<%=article.id%>">
+                            <div class="panel-body">
+                                <div class="form-group" align="left">
+                                    <label for="cln">날짜</label>
+                                    <input id="caldate" name="caldate" type="date" value="<%=article.time%>">
+                                </div>
+
+                                <div class="form-group" align="left">
+                                    <label for="cln">내용</label>
+                                    <input type="text" class="form-control" id="content" name="content" placeholder="" size=" 25" value="<%=article.content%>">
+                                </div>
+                                
+                                <div class="form-group" align="center">
+                                    <button type="submit" class="btn btn-primary" id="registerBtn">수정</button>
+                                    <button type="button" class="btn btn-warning" onclick="location.href='/calendar/modify_delete?id=<%=article.id%>';">삭제</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT -->
+        </div>
+        <!-- END MAIN -->
+    </div>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+	<script src="/vendor/chartist/js/chartist.min.js"></script>
+  <script src="/scripts/klorofil-common.js"></script>
+</body>
+
+</html>

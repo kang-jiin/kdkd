@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">등하원 관리</h3>
+					<ul class="nav nav-tabs">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#home">목록</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#menu1">달력</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div id="home" class="container tab-pane active"><br>
+							<br>
+
+							<div style="margin-bottom: 1%;">
+								<input id="birth" name="birth" type="month" value='<%=searchdate%>'
+									onchange="if(this.value) location.href='/inout?searchdate='+this.value;">
+							</div>
+							<div class="panel panel-headline col-sm-5"
+								style="overflow:auto; height:600px; padding:10px; margin-left: 3%;">
+								<h3 class="page-title">등원 관리</h3>
+								<div class="panel-body">
+									<div class="panel-body no-padding">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th class="text-left">No.</th>
+													<th class="text-center">시간</th>
+													<th class="text-center">이름</th>
+													<th class="text-center">비고</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% ins.forEach(function(insn){ %>
+												<tr>
+													<td class="text-left"><%=insn.no%></td>
+													<td class="text-center"><%=insn.time%></td>
+													<td class="text-center"><%=insn.name%></td>
+													<td class="text-center"><% if(insn.code == "bus"){ %>
+														버스
+														<%}else {%>
+														유치원
+														<%}%>	
+											</td>
+										</tr>
+										<% }); %>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1"></div>
+							<div class="panel panel-headline col-sm-5"
+								style="overflow:auto; height:600px; padding:10px;">
+								<h3 class="page-title">하원 관리</h3>
+								<div class="panel-body">
+									<div class="panel-body no-padding">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th class="text-left">No.</th>
+													<th class="text-center">시간</th>
+													<th class="text-center">이름</th>
+													<th class="text-center">비고</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% outs.forEach(function(outsn){ %>
+												<tr>
+													<td class="text-left"><%=outsn.no%></td>
+													<td class="text-center"><%=outsn.time%></td>
+													<td class="text-center"><%=outsn.name%></td>
+													<td class="text-center"><% if(outsn.code == "bus"){ %>
+														버스
+														<%}else {%>
+														유치원
+														<%}%>
+											</td>
+										</tr>
+										<% }); %>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="menu1" class="container tab-pane fade"><br>
+							<div class="col-md-12">
+								<div class="panel panel-headline">
+									<div class="panel-heading">
+										<div class="cal_top">
+											<a href="#" id="movePrevMonth"><span id="prevMonth"
+													class="cal_tit">&lt;</span></a>
+											<span id="cal_top_year"></span>
+											<span id="cal_top_month"></span>
+											<a href="#" id="moveNextMonth"><span id="nextMonth"
+													class="cal_tit">&gt;</span></a>
+										</div>
+										<div id="cal_tab" class="cal">
+										</div>
+
+										<script type="text/javascript">
+
+											var today = null;
+											var year = null;
+											var month = null;
+											var firstDay = null;
+											var lastDay = null;
+											var $tdDay = null;
+											var $tdSche = null;
+											var jsonData = null;
+											$(document).ready(function () {
+												drawCalendar();
+												initDate();
+												drawDays();
+												drawSche();
+												$("#movePrevMonth").on("click", function () { movePrevMonth(); });
+												$("#moveNextMonth").on("click", function () { moveNextMonth(); });
+											});
+
+											//Calendar 그리기
+											function drawCalendar() {
+												var setTableHTML = "";
+												setTableHTML += '<table class="calendar">';
+												setTableHTML += '<tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr>';
+												for (var i = 0; i < 6; i++) {
+													setTableHTML += '<tr height="100" width="100%">';
+													for (var j = 0; j < 7; j++) {
+														setTableHTML += '<td style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap">';
+														setTableHTML += '    <div class="cal-day"></div>';
+														setTableHTML += '    <div class="cal-schedule"></div>';
+														setTableHTML += '</td>';
+													}
+													setTableHTML += '</tr>';
+												}
+												setTableHTML += '</table>';
+												$("#cal_tab").html(setTableHTML);
+											}
+
+											function initDate() {
+												$tdDay = $("td div.cal-day")
+												$tdSche = $("td div.cal-schedule")
+												dayCount = 0;
+												today = new Date();
+												year = today.getFullYear();
+												month = today.getMonth() + 1;
+												if (month < 10) { month = "0" + month; }
+												firstDay = new Date(year, month - 1, 1);
+												lastDay = new Date(year, month, 0);
+											}
+
+										
+											function drawDays() {
+												$("#cal_top_year").text(year);
+												$("#cal_top_month").text(month);
+												for (var i = firstDay.getDay(); i < firstDay.getDay() + lastDay.getDate(); i++) {
+													$tdDay.eq(i).text(++dayCount);
+												}
+												for (var i = 0; i < 42; i += 7) {
+													$tdDay.eq(i).css("color", "red");
+												}
+												for (var i = 6; i < 42; i += 7) {
+													$tdDay.eq(i).css("color", "blue");
+												}
+											}
+
+											
+											function movePrevMonth() {
+												month--;
+												if (month <= 0) {
+													month = 12;
+													year--;
+												}
+												if (month < 10) {
+													month = String("0" + month);
+												}
+												getNewInfo();
+											}
+
+											function moveNextMonth() {
+												month++;
+												if (month > 12) {
+													month = 1;
+													year++;
+												}
+												if (month < 10) {
+													month = String("0" + month);
+												}
+												getNewInfo();
+											}
+
+											//정보갱신
+											function getNewInfo() {
+												for (var i = 0; i < 42; i++) {
+													$tdDay.eq(i).text("");
+												}
+												$tdSche.empty();
+												dayCount = 0;
+												firstDay = new Date(year, month - 1, 1);
+												lastDay = new Date(year, month, 0);
+												drawDays();
+												drawSche();
+											}
+
+											//2019-08-27 추가본
+
+											//데이터 등록
+											function setData() {
+												jsonData = [
+													{ "month": 12, "day": 25, "text": "크리스마스" },
+													<% calresults.forEach(function (result) { %>
+														{ "year":<%=result.year %>, "month":<%=result.month %>, "day":<%=result.day %>, "text": "<p><%=result.content%></p>" },
+													<% }); %>
+													{ "month": 7, "day": 17, "text": "제헌절" }
+												]
+											}
+
+											//스케줄 그리기
+											function drawSche() {
+												setData();
+												var dateMatch = new Array();
+												var txt = new Array();
+												for (var i = 0; i < jsonData.length; i++) {
+													if (jsonData[i].year == undefined) {
+														if(jsonData[i].month==month){
+															dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+															txt.push(jsonData[i].text);
+														}
+													}
+													else {
+														if (jsonData[i].year == year && jsonData[i].month == month) {
+															dateMatch.push(firstDay.getDay() + jsonData[i].day - 1);
+															txt.push(jsonData[i].text);
+														}
+													}
+												}
+
+												for (var i = 0; i < dateMatch.length; i++)
+													$tdSche.eq(dateMatch[i]).append(txt[i]);
+											}
+										</script>
+									</div>
+								</div>
+								<!-- END PANEL HEADLINE -->
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!-- END MAIN CONTENT -->
+	</div>
+	<!-- END MAIN -->
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/toastr/toastr.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+</body>
+
+</html>

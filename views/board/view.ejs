@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+        <%- include('../includes/navbar.ejs') %>
+        <%- include('../includes/sidebar.ejs') %>
+        <!-- MAIN -->
+        <div class="main">
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <div class="container-fluid">
+                    <h2 class="display-4">글 보기</h2>
+                    <div align="right">
+                        <button class="btn btn-secondary" onclick="location.href = '/board';">목록</button>
+                        <% if(user.userid == article.writer_id ) { %>
+                        <button class="btn btn-secondary"
+                            onclick="location.href = '/board/modify?num=<%=article.id%>';">수정</button>
+                        <button class="btn btn-secondary"
+                            onclick="location.href='/board/delete?num=<%=article.id%>';">삭제</button>
+                        <% }%>
+                    </div>
+                    <div class="row">
+                        <div class="panel panel-headline">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <colgroup>
+                                        <col width="100">
+                                        <col width="*">
+                                        <col width="100">
+                                        <col width="*">
+                                        <col width="100">
+                                        <col width="*">
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td>제목</td>
+                                            <td colspan="5"><strong>
+                                                    <%=article.id%>.
+                                                    <%=article.title%></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>작성자</td>
+                                            <td>
+                                                <%=article.name%>
+                                            </td>
+                                            <td>조회수</td>
+                                            <td>
+                                                <%=article.hit%>
+                                            </td>
+                                            <td>작성일</td>
+                                            <td>
+                                                <%=article.time%>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <br />
+                                                <%-article.content.replace(/\n/g, '<br/>')%>
+                                                <br />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="display-4">댓글</h3>
+                    <div class="row">
+                        <div class="panel panel-headline">
+                            <div>
+                                <form method="post" action="comment/add?num=<%=article.id%>">
+                                    <div class="input-group" style="width: 100%;" align="right">
+                                        <input id="comment_text" type="text" style="width: 800px;" name="comment"
+                                            class="form-control" placeholder="댓글을 입력하세요." maxlength=255 autocomplete="off" onkeyup="on_ck()">
+                                        <span class="input-group-btn">
+                                            <button id="comment_btn" style="margin-left: 15px;" class="btn btn-secondary"
+                                                type="submit" disabled>등록</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                            <br>
+                            <div>
+                                <table class="table table-hover">
+                                    <colgroup>
+                                        <col width="*">
+                                        <col width="10%">
+                                        <col width="20%">
+                                        <col width="10%">
+                                    </colgroup>
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th class="text-center">내용</th>
+                                            <th class="text-center">작성자</th>
+                                            <th class="text-center">작성 시간</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if(comment_lists.length == 0){ %>
+                                        <tr>
+                                            <td class="text-center" colspan="4">작성된 댓글이 없습니다.</td>
+                                        </tr>
+                                        <% } else { %>
+                                        <% comment_lists.forEach(function(comment){ %>
+                                        <tr>
+                                            <td class="text-left"><%=comment.content%></td>
+                                            <td class="text-center"><%=comment.writername%></td>
+                                            <td class="text-center"><%=comment.time%></td>
+                                            <% if(comment.writerid == user.userid) { %>
+                                            <td class="text-center">
+                                                <button class="btn btn-secondary" onclick="location.href='/board/comment/delete?bnum=<%=article.id%>&cnum=<%=comment.id%>';">삭제</button>
+                                            </td>
+                                            <% } %>
+                                        </tr>
+                                        <% }); %>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END MAIN CONTENT -->
+                </div>
+            </div>
+        </div>
+        <!-- END MAIN -->
+    </div>
+    <!-- END WRAPPER -->
+    <!-- Javascript -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="/vendor/chartist/js/chartist.min.js"></script>
+    <script src="/scripts/klorofil-common.js"></script>
+    <script>
+        function on_ck(){
+        var text = document.getElementById("comment_text").value;
+        var button = document.getElementById("comment_btn");
+        if(!text)
+        button.setAttribute("disabled", "");
+        else
+        button.removeAttribute("disabled");
+        }
+    </script>
+    </div>
+</body>
+
+</html>

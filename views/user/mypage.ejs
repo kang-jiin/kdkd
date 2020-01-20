@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+
+<body>
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">개인정보 수정</h3>
+					<div class="panel panel-headline" style="margin-left: 20%; margin-right: 20%;">
+						<div class="panel-body">
+							<div class="panel-heading">
+								<h3 class="panel-title">개인정보 수정</h3>
+							</div>
+							<div style="margin-left: 5%; margin-right: 5%;">
+								<form id="userUpdateform" method="post" action="/user/mypage">
+									<div class="form-group" align="left">
+										<label for="name">이름</label>
+										<input type="text" class="form-control" id="name" name="name" placeholder=""
+											value="<%=article.name%>">
+									</div>
+									<div class="form-group" align="left">
+										<label for="">아이디</label>
+										<input type="text" class="form-control" id="id" name="id"
+											onkeyup="javascript:idcheck();" placeholder="" value="<%=article.id%>"
+											readonly />
+										<div id="resultview"></div>
+									</div>
+									<div class="form-group" align="left">
+										<label for="">비밀번호</label>
+										<input type="password" class="form-control" id="pwd1" name="pass"
+											value="<%=article.password%>" placeholder="">
+									</div>
+									<div class="form-group" align="left">
+										<label for="">비밀번호재입력</label>
+										<input type="password" class="form-control" id="pwd2" name="passcheck"
+											value="<%=article.password%>" placeholder="">
+									</div>
+
+									<div class="alert alert-success" id="alert-success">비밀번호가 일치합니다.</div>
+									<div class="alert alert-danger" id="alert-danger">비밀번호가 일치하지 않습니다.</div>
+
+									<div class="form-group" align="left">
+										<label for="email">이메일</label><br>
+										<div id="email" class="custom-control-inline">
+											<input type="text" class="form-control" id="emailid" name="emailid"
+												placeholder="" size="25" value="<%=article.emailid%>">
+											@
+											<select class="form-control" id="emaildomain" name="emaildomain"
+												value="<%=article.emaildomain%>">
+												<option value="naver.com">naver.com</option>
+												<option value="google.com">google.com</option>
+												<option value="daum.net">daum.net</option>
+												<option value="nate.com">nate.com</option>
+												<option value="hanmail.net">hanmail.net</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group" align="left">
+										<label for="tel">전화번호</label>
+										<div id="tel" class="custom-control-inline">
+											<select class="form-control" id="tel1" name="tel1"
+												value="<%=article.tel1%>">
+												<option value="010">010</option>
+												<option value="02">02</option>
+												<option value="031">031</option>
+												<option value="032">032</option>
+												<option value="041">041</option>
+												<option value="051">051</option>
+												<option value="061">061</option>
+											</select> _
+											<input type="text" class="form-control" id="tel2" name="tel2"
+												onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'
+												maxlength=4 value="<%=article.tel2%>"> _
+											<input type="text" class="form-control" id="tel3" name="tel3"
+												onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)'
+												maxlength=4 value="<%=article.tel3%>">
+										</div>
+									</div>
+									<div class="form-group" align="left">
+										<label for="">주소</label><br>
+										<input class="form-control" style="width: 40%; display: inline;" name="addr1"
+											id="addr1" type="text" readonly="readonly" value="<%=article.zip_code%>">
+										<button type="button" class="btn btn-warning" onclick="execPostCode();"><i
+												class="fa fa-search"></i> 우편번호 찾기</button>
+									</div>
+									<div class="form-group">
+										<input class="form-control" style="top: 5px;" name="addr2" id="addr2"
+											type="text" readonly="readonly" value="<%=article.address%>" />
+									</div>
+									<div class="form-group">
+										<input class="form-control" name="addr3" id="addr3" type="text"
+											value="<%=article.detail_address%>" />
+										<div class="form-group" align="center">
+											<br>
+											<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+										</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<% if(user.grade != 'A') { %>
+				<div class="container-fluid">
+					<div class="panel panel-headline" style="margin-left: 20%; margin-right: 20%;">
+						<div class="panel-body">
+							<div style="margin-left: 5%; margin-right: 5%;">
+								<h3 class="page-title">학생 정보</h3>
+								<div class="panel">
+									<div class="panel-body">
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th>반</th>
+													<th>이름</th>
+													<th>생일</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% student.forEach(function(student1){ %>
+												<tr>
+													<td><%=student1.class%></td>
+													<td><%=student1.name%></td>
+													<td><%=student1.birth%></td>
+												</tr>
+												<% }); %>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<a href="/user/user_student_add"><button class="btn btn-secondary" type="button" style="margin-left: 40%;">학생 추가</button></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<% } %>
+
+			</div>
+
+		</div>
+		<!-- END MAIN CONTENT -->
+	</div>
+	<!-- END MAIN -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+	<script src="/js/signup.js"></script>
+	<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+	<script src="/js/addressapi.js"></script>
+</body>
+
+</html>

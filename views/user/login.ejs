@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" class="fullscreen-bg">
+
+    <%- include('../includes/head.ejs') %>
+
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<div class="vertical-align-wrap">
+			<div class="vertical-align-middle">
+				<div class="auth-box ">
+					<div class="left">
+						<div class="content">
+							<div class="header">
+								<div class="logo text-center"><img src="/img/logo-dark.png" alt="Klorofil Logo"></div>
+							</div>
+							<% if(pass == false) { %>
+							<p style="color: red;">아이디 또는 비밀번호가 잘못되었습니다.</p>
+							<% } %>
+							<form method="POST" class="form-auth-small" action="/user/login">
+								<div class="form-group">
+									<label for="signin-email" class="control-label sr-only">ID</label>
+									<input type="text" class="form-control" id="usr" value="" placeholder="ID" name="username">
+								</div>
+								<div class="form-group">
+									<label for="signin-password" class="control-label sr-only">Password</label>
+									<input type="password" class="form-control" id="pwd" value="" placeholder="Password" name="password">
+								</div>
+								<button type="submit" class="btn btn-primary btn-lg btn-block">로그인</button>
+								<div style="margin-top: 5%;">
+									<a href="/user/naver" id="join">
+									<img src="/img/naverlogin.png" width="42%" style="margin-right: 5%;"></a>
+									<a href="/user/kakao" id="join">
+									<img src="/img/kakaologin.png" width="42%"></a>
+								</div>
+								<div class="bottom">
+									<span class="helper-text"><i class="fa fa-lock"></i> <a href="/user/pw">회원정보 찾기</a></span>
+									<span class="helper-text"><i class="lnr lnr-user"></i> <a href="/user/signup">회원가입</a></span>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="right">
+						<div class="overlay"></div>
+						<div class="content text">
+							<h1 class="heading">키드키득 에 오신걸 환영합니다!</h1>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END WRAPPER -->
+</body>
+
+</html>

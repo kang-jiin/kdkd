@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+<%- include('../includes/head.ejs') %>
+<body>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('../includes/navbar.ejs') %>
+		<%- include('../includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<h3 class="page-title">자유 게시판</h3>
+					<div align="right"><a href="/board/write"><button class="btn btn-primary"
+								type="button">글쓰기</button></a></div>
+					<div class="panel panel-headline" style="margin-top: 1%;">
+						<div class="panel-body">
+							<div class="panel-body no-padding">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th class="text-center">No.</th>
+											<th class="text-center">제목</th>
+											<th class="text-center">작성자</th>
+											<th class="text-center">작성일</th>
+											<th class="text-center">조회수</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% articles.forEach(function(article){ %>
+										<tr onclick="location.href = '/board/view?num=<%=article.id%>';">
+											<td class="text-center"><%=article.id%></td>
+											<td class="text-left"><%=article.title%></a></td>
+											<td class="text-center"><%=article.name%></td>
+											<td class="text-center"><%=article.time%></td>
+											<td class="text-center"><%=article.hit%></td>
+										</tr>
+										<% }); %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="text-center">
+							<ul class="pagination text-center">
+								<%var cont = Math.ceil(current/10);%>
+								<%if(cont>1){%>
+									<a class="nextgroup" href="/board?page=<%=(cont-2)*10+1%>">이전</a>
+								<%}if(pages<=cont*10){%>
+									<%for(var i = (cont-1)*10+1; i <= pages; i++){%>
+										<a class="pagebtns" href="/board?page=<%=i%>"><%= i%></a>
+								<%}}else{%>
+									<%for(var i = (cont-1)*10 + 1; i <= (cont-1)*10 + 10; i++){%>
+										<a class="pagebtns" href="/board?page=<%=i%>"><%= i%></a>
+									<%}%>
+								<a class="nextgroup" href="/board?page=<%=cont*10+1%>">다음</a>
+								<%}%>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+	</div>
+	<!-- END MAIN -->
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/chartist/js/chartist.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+
+</body>
+
+</html>

@@ -1,22 +1,362 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>
-        <%= titlestr %>
-    </title>
-</head>
+<%- include('./includes/head.ejs') %>
 
 <body>
-    <div>
-        <h3>ejs test index!!!!!</h3>
-    </div>
-    <ul>
-        <%_ contents.forEach(function(content){ _%>
-        <li><%= content%></li>
-        <%_ }); _%>
-    </ul>
+	<!-- WRAPPER -->
+	<div id="wrapper">
+		<%- include('./includes/navbar.ejs') %>
+		<%- include('./includes/sidebar.ejs') %>
+		<!-- MAIN -->
+		<div class="main">
+			<!-- 센서들 -->
+			<div class="main-content">
+				<div class="container-fluid">
+					<!-- OVERVIEW -->
+					<div class="panel panel-headline">
+						<div class="panel-heading">
+							<h3 class="panel-title">온도, 습도, 미세먼지 <%=environments[0].t%>시</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="metric">
+										<span class="icon"><i class="fas fa-thermometer-three-quarters"></i></span>
+										<p>
+											<span class="number"><%=environments[0].temperature%>˚C</span>
+											<span class="title">온도</span>
+										</p>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="metric">
+										<span class="icon"><i class="fas fa-tint"></i></span>
+										<p>
+											<span class="number"><%=environments[0].humidity%>%</span>
+											<span class="title">습도</span>
+										</p>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="metric">
+										<span class="icon"><i class="fab fa-soundcloud"></i></span>
+										<p>
+											<span class="number"><%=environments[0].dust%>㎍/m³</span>
+											<span class="title">미세먼지</span>
+										</p>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<!-- 여기서 부터 CCTV 게시판 -->
+					<div class="row">
+						<div class="col-md-6">
+							<!-- RECENT PURCHASES -->
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">자유 게시판</h3>									
+								</div>
+								<div class="panel-body no-padding">
+									<table class="table table-striped table-hover">
+										<thead>
+											<tr>
+												<th class="text-center">No.</th>
+												<th class="text-center">제목</th>
+												<th class="text-center">작성자</th>
+												<th class="text-center">작성일</th>
+												<th class="text-center">조회수</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% boards.forEach(function(article){ %>
+											<tr onclick="location.href = '/board/view?num=<%=article.id%>';">
+												<td class="text-center"><%=article.id%></td>
+												<td class="text-left"><%=article.title%></a></td>
+												<td class="text-center"><%=article.name%></td>
+												<td class="text-center"><%=article.time%></td>
+												<td class="text-center"><%=article.hit%></td>
+											</tr>
+											<% }); %>
+										</tbody>
+									</table>
+								</div>
+								<div class="panel-footer">
+									<div class="row">
+										<div class="col-md-6"><span class="panel-note"><i class="fa fa-clock-o"></i> Last 5 list</span></div>
+										<div class="col-md-6 text-right"><a href="/board" class="btn btn-primary">게시판 이동</a></div>
+									</div>
+								</div>
+							</div>
+							<!-- END RECENT PURCHASES -->
+						</div>
+						<div class="col-md-6">
+							<!-- MULTI CHARTS -->
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">반 내부</h3>
+									<div class="right">
+										<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+										<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+									</div>
+								</div>
+								<div class="panel-body" align="center">
+									<img id="play">
+									<script>
+										var socket = io();
+										socket.on('stream', function (image) {
+											var img = document.getElementById("play");
+											img.src = image;
+											var log = document.getElementById("logger");
+											$("#logger").text(image);
+										});
+									</script>
+								</div>
+							</div>
+							<!-- END MULTI CHARTS -->
+						</div>
+					</div>
+					<!-- 여기서 부터 차트 -->
+					<div class="row">
+						<div class="col-md-4">
+							<!-- TASKS -->
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">온도 (˚C)</h3>
+									<div class="right">
+										<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+										<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+									</div>
+								</div>
+								<div class="panel-body">
+									<div id="temp-chart" class="ct-chart"></div>
+								</div>
+							</div>
+							<!-- END TASKS -->
+						</div>
+						<div class="col-md-4">
+							<!-- VISIT CHART -->
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">습도 (%)</h3>
+									<div class="right">
+										<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+										<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+									</div>
+								</div>
+								<div class="panel-body">
+									<div id="humid-chart" class="ct-chart"></div>
+								</div>
+							</div>
+							<!-- END VISIT CHART -->
+						</div>
+						<div class="col-md-4">
+							<!-- REALTIME CHART -->
+							<div class="panel">
+								<div class="panel-heading">
+									<h3 class="panel-title">미세먼지 (㎍/m³)</h3>
+									<div class="right">
+										<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+										<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+									</div>
+								</div>
+								<div class="panel-body">
+									<div id="dust-chart" class="ct-chart"></div>
+								</div>
+							</div>
+							<!-- END REALTIME CHART -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END MAIN CONTENT -->
+		</div>
+		<!-- END MAIN -->
+		
+	</div>
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+	<script src="/vendor/chartist/js/chartist.min.js"></script>
+	<script src="/scripts/klorofil-common.js"></script>
+	<script>
+	$(function() {
+		let data, options;
+
+		data = {
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
+			series: [{
+				name: 'series-real',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].temperature%> ,
+				<% } %>
+				<%=environments[0].temperature%>
+			],
+			}, {
+				name: 'series-projection',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].temperature%> ,
+				<% } %>
+				<%=environments[0].temperature%>
+			],
+			}]
+		};
+
+		options = {
+			fullWidth: true,
+			lineSmooth: true,
+			height: "270px",
+			low: 'auto',
+			high: 'auto',
+			series: {
+				'series-projection': {
+					showArea: true,
+					showPoint: false,
+					showLine: false
+				},
+			},
+			axisX: {
+				showGrid: false,
+
+			},
+			axisY: {
+				showGrid: false,
+				onlyInteger: true,
+				offset: 0,
+			},
+			chartPadding: {
+				left: 20,
+				right: 20
+			}
+		};
+
+		new Chartist.Line('#temp-chart', data, options);
+
+		data = {
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
+			series: [{
+				name: 'series-real',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].humidity%> ,
+				<% } %>
+				<%=environments[0].humidity%>
+			],
+			}, {
+				name: 'series-projection',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].humidity%> ,
+				<% } %>
+				<%=environments[0].humidity%>
+			],
+			}]
+		};
+
+		options = {
+			fullWidth: true,
+			lineSmooth: true,
+			height: "270px",
+			low: 'auto',
+			high: 'auto',
+			series: {
+				'series-projection': {
+					showArea: true,
+					showPoint: false,
+					showLine: false
+				},
+			},
+			axisX: {
+				showGrid: false,
+			},
+			axisY: {
+				showGrid: false,
+				onlyInteger: true,
+				offset: 0,
+			},
+			chartPadding: {
+				left: 20,
+				right: 20
+			}
+		};
+
+		new Chartist.Line('#humid-chart', data, options);
+
+		data = {
+			labels: [
+				<% for(let i=9; i>0; i--){ %>
+				'<%=environments[i].t%>' ,
+				<% } %>
+				'<%=environments[0].t%>'
+			],
+			series: [{
+				name: 'series-real',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].dust%> ,
+				<% } %>
+				<%=environments[0].dust%>
+			],
+			}, {
+				name: 'series-projection',
+				data: [
+				<% for(let i=9; i>0; i--){ %>
+				<%=environments[i].dust%> ,
+				<% } %>
+				<%=environments[0].dust%>
+			],
+			}]
+		};
+
+		options = {
+			fullWidth: true,
+			lineSmooth: true,
+			height: "270px",
+			low: 'auto',
+			high: 'auto',
+			series: {
+				'series-projection': {
+					showArea: true,
+					showPoint: false,
+					showLine: false
+				},
+			},
+			axisX: {
+				showGrid: false,
+
+			},
+			axisY: {
+				showGrid: false,
+				onlyInteger: true,
+				offset: 0,
+			},
+			chartPadding: {
+				left: 20,
+				right: 20
+			}
+		};
+
+		new Chartist.Line('#dust-chart', data, options);
+
+	});
+	</script>
 </body>
 
 </html>
